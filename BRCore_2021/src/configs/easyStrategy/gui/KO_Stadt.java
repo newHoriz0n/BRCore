@@ -9,34 +9,24 @@ import lib.ctrl.OV_Controller;
 import lib.ctrl.gui.Aktion;
 import lib.ctrl.gui.OV_GUI_Controller;
 import lib.model.KreisObjekt;
-import lib.model.ObjektVerwaltung;
 
 public class KO_Stadt extends KreisObjekt {
 
-	private Stadt stadt;
-	private OV_Controller oc;
+	public KO_Stadt(Stadt s, OV_Controller oc) {
 
-	public KO_Stadt(Stadt s) {
-
-		super(s.getPosX(), s.getPosY(), s.getRadius(), Color.GRAY, Spieler.getSpielerFarbe(s.getSpielerID()));
-
-		this.stadt = s;
+		super(s.getPosX(), s.getPosY(), s.getRadius(), Color.LIGHT_GRAY, Spieler.getSpielerFarbe(s.getSpielerID()));
 
 		setEventAktion(EEventTyp.MAUSKLICK_LINKS, new Aktion() {
 
 			@Override
 			public void run() {
-				OV_GUI_Controller sc = new OV_GUI_Controller("Stadtdetailansicht", oc.getViewer().getWidth() - 300, 0, 300,
-						oc.getViewer().getHeight());
+				OV_GUI_Controller sc = new GUI_Ctrl_Stadtansicht("Stadtdetailansicht", oc.getViewer().getWidth() - 300, 0, 300,
+						oc.getViewer().getHeight(), s);
 				sc.setHintergrundFarbe(Color.BLACK);
 				oc.addOverLayGC(sc);
 			}
 		});
 
-	}
-	
-	public void setController(OV_Controller oc) {
-		this.oc = oc;
 	}
 
 }

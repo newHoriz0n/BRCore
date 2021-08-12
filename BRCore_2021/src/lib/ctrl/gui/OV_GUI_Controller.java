@@ -5,16 +5,18 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OV_GUI_Controller implements Comparable<OV_GUI_Controller> {
+public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller> {
 
 	// Verwaltet Buttons
 
 	private String titel;
 
+	private boolean visible;
+	private boolean enabled;
 	private boolean active;
 
 	private int zIndex;
-	private int posX, posY, width, height;
+	protected int posX, posY, width, height;
 	private Color farbeHintergrund;
 
 	private Object ButtonLock = new Object();
@@ -61,10 +63,35 @@ public class OV_GUI_Controller implements Comparable<OV_GUI_Controller> {
 		return false;
 	}
 
+	public boolean handleMouseMoveIntern(int aktScreenMouseX, int aktScreenMouseY, int button) {
+		if (isMouseOver(aktScreenMouseX, aktScreenMouseY)) {
+			int[] internMausCoords = getGUICoordsVonScreenCoords(aktScreenMouseX, aktScreenMouseY);
+			for (Button b : buttons) {
+				b.handleMouseMove(internMausCoords[0], internMausCoords[1]);
+			}
+			return true;
+		}
+		return false;
+	}
+
 	public boolean handleMousePress(int aktScreenMouseX, int aktScreenMouseY, int aktRealMausPosX, int aktRealMausPosY, int button) {
 		if (isMouseOver(aktScreenMouseX, aktScreenMouseY)) {
 			for (Button b : buttons) {
 				b.handleMousePress(aktRealMausPosX, aktRealMausPosY, button);
+			}
+			active = true;
+			return true;
+		} else {
+			active = false;
+			return false;
+		}
+	}
+
+	public boolean handleMousePressIntern(int aktScreenMouseX, int aktScreenMouseY, int button) {
+		if (isMouseOver(aktScreenMouseX, aktScreenMouseY)) {
+			int[] internMausCoords = getGUICoordsVonScreenCoords(aktScreenMouseX, aktScreenMouseY);
+			for (Button b : buttons) {
+				b.handleMousePress(internMausCoords[0], internMausCoords[1], button);
 			}
 			active = true;
 			return true;
@@ -84,16 +111,46 @@ public class OV_GUI_Controller implements Comparable<OV_GUI_Controller> {
 		return false;
 	}
 
-	public void drawGUIController(Graphics2D g) {
+	public boolean handleMouseReleaseIntern(int aktScreenMouseX, int aktScreenMouseY, int button) {
+		if (isMouseOver(aktScreenMouseX, aktScreenMouseY)) {
+			int[] internMausCoords = getGUICoordsVonScreenCoords(aktScreenMouseX, aktScreenMouseY);
+			for (Button b : buttons) {
+				b.handleMouseRelease(internMausCoords[0], internMausCoords[1], button);
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Use drawGUIContent() um eigene Inhalte zu zeichnen
+	 * 
+	 * @param g
+	 * @param transform
+	 */
+	public void drawGUIController(Graphics2D g, boolean transform) {
 		synchronized (ButtonLock) {
+
 			if (farbeHintergrund != null) {
 				g.setColor(farbeHintergrund);
 				g.fillRect(posX, posY, width, height);
 			}
+
+			if (transform) {
+				g.translate(posX, posY);
+			}
+			drawGUIContent(g);
 			for (Button b : buttons) {
 				b.draw(g);
 			}
+			if (transform) {
+				g.translate(-posX, -posY);
+			}
+
 		}
+	}
+
+	protected void drawGUIContent(Graphics2D g2d) {
 	}
 
 	public void setZIndex(int z) {
@@ -119,6 +176,35 @@ public class OV_GUI_Controller implements Comparable<OV_GUI_Controller> {
 	public void setSize(int w, int h) {
 		this.width = w;
 		this.height = h;
+	}
+
+	protected abstract void loadButtons();
+
+	protected abstract int[] getGUICoordsVonScreenCoords(int screenX, int screenY);
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((titel == null) ? 0 : titel.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		OV_GUI_Controller other = (OV_GUI_Controller) obj;
+		if (titel == null) {
+			if (other.titel != null)
+				return false;
+		} else if (!titel.equals(other.titel))
+			return false;
+		return true;
 	}
 
 }

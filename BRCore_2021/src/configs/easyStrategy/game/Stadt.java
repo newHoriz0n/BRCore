@@ -7,7 +7,11 @@ public class Stadt {
 	private int spielerID;
 
 	public Stadt(String name, int posX, int posY, int spielerID) {
-
+		this.name = name;
+		this.posX = posX;
+		this.posY = posY;
+		this.spielerID = spielerID;
+		this.radius = 30;
 	}
 
 	public String getName() {

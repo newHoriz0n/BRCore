@@ -18,6 +18,7 @@ import lib.ctrl.gui.Aktion;
 import lib.ctrl.gui.Button;
 import lib.ctrl.gui.ButtonRound;
 import lib.ctrl.gui.OV_GUI_Controller;
+import lib.ctrl.gui.OV_Main_GUI_Controller;
 import lib.model.KreisObjekt;
 import lib.model.OV_Model;
 import lib.model.ObjektVerwaltung;
@@ -54,7 +55,7 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 		this.mouseHandler = new HashMap<>();
 		this.aktRealMausPos = new int[2];
 
-		this.main_gc = new OV_GUI_Controller("Main", 0, 0, 0, 0);
+		this.main_gc = new OV_Main_GUI_Controller("Main", 0, 0, 0, 0);
 
 	}
 
@@ -117,7 +118,7 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 			aktRealMausPos = getRealVonScreenKoords(e.getX(), e.getY());
 			lastMoveUpdate = System.currentTimeMillis();
 			for (OV_GUI_Controller c : overlay_gcs) {
-				if (c.handleMouseMove(e.getX(), e.getY(), aktRealMausPos[0], aktRealMausPos[1], e.getButton())) {
+				if (c.handleMouseMoveIntern(e.getX(), e.getY(), e.getButton())) {
 					return;
 				}
 			}
@@ -135,7 +136,7 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 				mouseHandler.get(id).handleMouseUpdate(this, v);
 			}
 			for (OV_GUI_Controller c : overlay_gcs) {
-				if (c.handleMouseMove(e.getX(), e.getY(), aktRealMausPos[0], aktRealMausPos[1], 0)) {
+				if (c.handleMouseMoveIntern(e.getX(), e.getY(), 0)) {
 					return;
 				}
 			}
@@ -164,7 +165,7 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 	@Override
 	public void mousePressed(MouseEvent e) {
 		for (OV_GUI_Controller c : overlay_gcs) {
-			if (c.handleMousePress(e.getX(), e.getY(), aktRealMausPos[0], aktRealMausPos[1], e.getButton())) {
+			if (c.handleMousePressIntern(e.getX(), e.getY(), e.getButton())) {
 				return;
 			}
 		}
@@ -175,7 +176,7 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		for (OV_GUI_Controller c : overlay_gcs) {
-			if (c.handleMouseRelease(e.getX(), e.getY(), aktRealMausPos[0], aktRealMausPos[1], e.getButton())) {
+			if (c.handleMouseReleaseIntern(e.getX(), e.getY(), e.getButton())) {
 				return;
 			}
 		}
@@ -207,6 +208,7 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 					@Override
 					public void run() {
 						k.handleEvent(EEventTyp.MAUSKLICK_LINKS);
+						ov.setFocusedObject(k);
 					}
 				});
 				b.setAktionRechts(new Aktion() {
@@ -214,6 +216,7 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 					@Override
 					public void run() {
 						k.handleEvent(EEventTyp.MAUSKLICK_RECHTS);
+						ov.setFocusedObject(k);
 					}
 				});
 				bs.add(b);
@@ -223,7 +226,7 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 	}
 
 	public void draw(Graphics2D g2d) {
-		main_gc.drawGUIController(g2d); // Zeichnet Buttons
+		main_gc.drawGUIController(g2d, false); // Zeichnet Buttons
 		if (showMouseCoords) {
 			g2d.setColor(Color.BLACK);
 			g2d.drawString("" + aktRealMausPos[0] + "," + aktRealMausPos[1], aktRealMausPos[0], aktRealMausPos[1]);
@@ -232,7 +235,7 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 
 	public void drawOverlayGUIs(Graphics2D g2d) {
 		for (OV_GUI_Controller c : overlay_gcs) {
-			c.drawGUIController(g2d);
+			c.drawGUIController(g2d, true);
 		}
 	}
 
@@ -246,8 +249,10 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 	}
 
 	public void addOverLayGC(OV_GUI_Controller gc) {
-		overlay_gcs.add(gc);
-		Collections.sort(overlay_gcs);
+		if (!overlay_gcs.contains(gc)) {
+			overlay_gcs.add(gc);
+			Collections.sort(overlay_gcs);
+		}
 	}
 
 	public void removeOverlayGC(String id) {

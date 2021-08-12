@@ -5,7 +5,7 @@ import lib.ctrl.OV_MouseHandler;
 import lib.ctrl.OV_Controller;
 import lib.exe.OV_MainFrame;
 import lib.view.Betrachter;
-import lib.view.FocusOnPerson_Betrachter;
+import lib.view.Betrachter_FocusPerson;
 import lib.view.OV_ViewContainer;
 
 public class RandomObjectsMain {
@@ -13,7 +13,7 @@ public class RandomObjectsMain {
 	public static void main(String[] args) {
 
 		RandomObjectsModel m = new RandomObjectsModel();
-		Betrachter b = new FocusOnPerson_Betrachter(50000, 50000);
+		Betrachter b = new Betrachter_FocusPerson(50000, 50000);
 		m.setBetrachter(b);
 
 		OV_Controller tc = new OV_Controller(m);

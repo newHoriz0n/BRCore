@@ -7,7 +7,7 @@ import lib.ctrl.OV_KeyHandler;
 import lib.ctrl.OV_MouseHandler;
 import lib.ctrl.OV_Controller;
 
-public class FocusOnPerson_Betrachter implements Betrachter, OV_KeyHandler, OV_MouseHandler {
+public class Betrachter_FocusPerson implements Betrachter, OV_KeyHandler, OV_MouseHandler {
 
 
 	protected double x;
@@ -24,7 +24,7 @@ public class FocusOnPerson_Betrachter implements Betrachter, OV_KeyHandler, OV_M
 
 	private int size;
 
-	public FocusOnPerson_Betrachter(double x, double y) {
+	public Betrachter_FocusPerson(double x, double y) {
 		this.x = x;
 		this.y = y;
 		this.size = 20;

@@ -4,7 +4,7 @@ import lib.ctrl.OV_Controller;
 import lib.model.listener.EUpdateTopic;
 import lib.view.Betrachter;
 
-public class OV_Model {
+public abstract class OV_Model {
 
 	protected ObjektVerwaltung ov;
 	protected OV_Controller oc;
@@ -24,6 +24,9 @@ public class OV_Model {
 	public void setController(OV_Controller oc) {
 		this.oc = oc;
 		ov.addUpdateListener(EUpdateTopic.RELEVANZEN, oc);
+		notifyControllerSet();
 	}
+	
+	protected abstract void notifyControllerSet();
 
 }

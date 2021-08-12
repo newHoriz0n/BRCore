@@ -5,11 +5,11 @@ import java.awt.Graphics2D;
 
 import lib.model.KreisObjekt;
 
-public class FocusOnObject_Betrachter implements Betrachter {
+public class Betrachter_FocusObject implements Betrachter {
 	
 	private KreisObjekt fokusObjekt;
 
-	public FocusOnObject_Betrachter() {
+	public Betrachter_FocusObject() {
 
 	}
 

@@ -14,6 +14,7 @@ import java.util.TimerTask;
 import lib.model.listener.EUpdateTopic;
 import lib.model.listener.UpdateListener;
 import lib.view.Betrachter;
+import lib.view.Betrachter_FocusObject;
 import lib.view.OV_ViewContainer;
 
 public class ObjektVerwaltung {
@@ -73,6 +74,10 @@ public class ObjektVerwaltung {
 		}
 		long dt = System.nanoTime() - lastUpdate;
 		if (b != null) {
+			//Setze Fokus auf Fokusiertes Objekt
+			if (b.getClass().equals(Betrachter_FocusObject.class)) {
+				((Betrachter_FocusObject) b).setFocusObject(focusedObjekt);
+			}
 			b.update(dt);
 		}
 		lastUpdate = System.nanoTime();
@@ -146,6 +151,7 @@ public class ObjektVerwaltung {
 			// System.out.println("Calc Übertrag - Dauer: " + (System.currentTimeMillis() -
 			// start_uebertrag));
 		}
+		
 
 		if (listeners != null) {
 			if (listeners.containsKey(EUpdateTopic.RELEVANZEN)) {
@@ -190,7 +196,8 @@ public class ObjektVerwaltung {
 			for (KreisObjekt k : direktSichtbareKreise) {
 				k.draw(g, b, screenRadius);
 			}
-
+			g.setClip(null);
+			
 		}
 
 		// System.out.println("Entfernte Kreise: " + entferntSichtbareKreise.size());
@@ -266,6 +273,11 @@ public class ObjektVerwaltung {
 
 	public void setFocusedObject(KreisObjekt ko) {
 		this.focusedObjekt = ko;
+		if (b != null) {
+			if (b.getClass().equals(Betrachter_FocusObject.class)) {
+				((Betrachter_FocusObject) b).setFocusObject(ko);
+			}
+		}
 	}
 
 	public KreisObjekt getFocusedObjekt() {
