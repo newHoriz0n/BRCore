@@ -3,14 +3,14 @@ package configs.easyStrategy;
 import configs.easyStrategy.game.EasyStrategy;
 import lib.ctrl.OV_Controller;
 import lib.exe.OV_MainFrame;
-import lib.view.Betrachter_FocusObject;
+import lib.view.Betrachter_FreierVogel;
 import lib.view.OV_ViewContainer;
 
 public class EasyStrategyMain {
 
 	public static void main(String[] args) {
 		EasyStrategy es = new EasyStrategy(2);
-		Betrachter_FocusObject b = new Betrachter_FocusObject();
+		Betrachter_FreierVogel b = new Betrachter_FreierVogel();
 		es.setBetrachter(b);
 
 		OV_Controller oc = new OV_Controller(es);

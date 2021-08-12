@@ -9,6 +9,7 @@ import java.util.HashMap;
 import lib.ctrl.EEventTyp;
 import lib.ctrl.OV_EventHandler;
 import lib.ctrl.gui.Aktion;
+import lib.model.ObjektVerwaltung.ObjectVerwaltungSettingValues;
 import lib.view.Betrachter;
 
 public class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHandler {
@@ -27,6 +28,8 @@ public class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHandler {
 
 	private double centerDistanz = 0;
 	private double randDistanz = 0;
+
+	private int ohneBullsEyeAnzeigDistanz = 2000;
 
 	private HashMap<EEventTyp, Aktion> eventAktionen = new HashMap<>();
 
@@ -67,9 +70,11 @@ public class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHandler {
 	 * @param b
 	 * @param metereologischeSichtweite
 	 * @param sichtAufloesung
-	 * @return 0: irrelevant, 1: metereologisch sichtbar, 2: im Screen sichtbar
+	 * @param
+	 * @return 0: irrelevant, 1: metereologisch sichtbar, 3: im Screen sichtbar
 	 */
-	public int calcRelevanz(Betrachter b, double metereologischeSichtweite, double sichtAufloesung, double screenRadius) {
+	public int calcRelevanz(Betrachter b, double metereologischeSichtweite, double sichtAufloesung, double screenRadius,
+			ObjectVerwaltungSettingValues bullseyeSetting) {
 
 		// TODO: Berücksichtige Bewegungsgeschwindigkeit in screenRadius
 
@@ -79,18 +84,26 @@ public class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHandler {
 
 				calcDistanzZu(b.getX(), b.getY());
 
-				this.sichtbarkeit = 1 - ((randDistanz - screenRadius) / metereologischeSichtweite);
+				if (bullseyeSetting.equals(ObjectVerwaltungSettingValues.BULLSEYE_ON)) {
 
-				if (sichtbarkeit > 0) {
-					if (calcSichtwinkelTan() > sichtAufloesung) {
-						if (randDistanz < screenRadius - 100) {
-							return 3;
-						} else if (randDistanz < screenRadius + 100) {
-							return 2;
+					this.sichtbarkeit = 1 - ((randDistanz - screenRadius) / metereologischeSichtweite);
+
+					if (sichtbarkeit > 0) {
+						if (calcSichtwinkelTan() > sichtAufloesung) {
+							if (randDistanz < screenRadius - 100) { // Nur im HauptScreen sichtbar
+								return 3;
+							} else if (randDistanz < screenRadius + 100) { // In Haupt und Entfernt sichtbar
+								return 2;
+							}
+							return 1; // Nur entfernt sichtbar
 						}
-						return 1;
+					}
+				} else {
+					if (randDistanz < ohneBullsEyeAnzeigDistanz) { // Nur im HauptScreen sichtbar
+						return 3;
 					}
 				}
+
 			}
 		}
 
@@ -98,8 +111,19 @@ public class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHandler {
 
 	}
 
-	public void draw(Graphics2D g, Betrachter b, double screenRadius) {
-		if (randDistanz < screenRadius) {
+	public void draw(Graphics2D g, Betrachter b, double screenRadius, ObjectVerwaltungSettingValues bullseyeSetting) {
+
+		boolean draw = false;
+		if (bullseyeSetting.equals(ObjectVerwaltungSettingValues.BULLSEYE_ON)) {
+			if (randDistanz < screenRadius) {
+				draw = true;
+			}
+		} else {
+			if (randDistanz < ohneBullsEyeAnzeigDistanz) {
+				draw = true;
+			}
+		}
+		if (draw) {
 			g.setColor(farbeHintergrund);
 			g.fillOval((int) (posX - radius), (int) (posY - radius), (int) (radius * 2), (int) (radius * 2));
 			if (bild != null) {

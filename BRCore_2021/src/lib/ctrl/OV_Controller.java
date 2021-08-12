@@ -249,10 +249,9 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 	}
 
 	public void addOverLayGC(OV_GUI_Controller gc) {
-		if (!overlay_gcs.contains(gc)) {
-			overlay_gcs.add(gc);
-			Collections.sort(overlay_gcs);
-		}
+		removeOverlayGC(gc.getTitel());
+		overlay_gcs.add(gc);
+		Collections.sort(overlay_gcs);
 	}
 
 	public void removeOverlayGC(String id) {

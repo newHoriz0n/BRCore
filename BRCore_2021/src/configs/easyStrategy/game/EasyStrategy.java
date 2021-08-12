@@ -47,7 +47,8 @@ public class EasyStrategy extends OV_Model {
 
 	private void loadStaedte() {
 		this.staedte = new ArrayList<>();
-		addStadt("Hauptstadt", 100, 0, 0);
+		addStadt("Feindstadt", 1100, 0, 0);
+		addStadt("Hauptstadt", 100, 0, 1);
 	}
 
 	private void addStadt(String name, int posX, int posY, int spielerID) {
@@ -55,7 +56,6 @@ public class EasyStrategy extends OV_Model {
 		KreisObjekt k = new KO_Stadt(s, oc);
 		staedte.add(s);
 		ov.addKreis(k);
-		ov.setFocusedObject(k);
 	}
 
 	@Override

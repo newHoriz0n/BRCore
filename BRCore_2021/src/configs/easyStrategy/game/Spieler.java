@@ -8,6 +8,8 @@ public class Spieler {
 		switch (id) {
 		case 0:
 			return Color.RED;
+		case 1:
+			return Color.BLUE;
 		default:
 			return Color.GRAY;
 		}

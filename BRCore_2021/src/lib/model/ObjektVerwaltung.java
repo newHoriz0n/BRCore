@@ -45,6 +45,16 @@ public class ObjektVerwaltung {
 
 	private HashMap<EUpdateTopic, List<UpdateListener>> listeners;
 
+	public enum ObjectVerwaltungSettingFields {
+		BULLSEYE
+	};
+
+	public enum ObjectVerwaltungSettingValues {
+		BULLSEYE_ON, BULLSEYE_OFF
+	};
+
+	private HashMap<ObjectVerwaltungSettingFields, ObjectVerwaltungSettingValues> viewSettings;
+
 	public ObjektVerwaltung() {
 		this.kreise = new ArrayList<>();
 		this.entferntRelevanteKreise = new ArrayList<>();
@@ -55,6 +65,9 @@ public class ObjektVerwaltung {
 		this.direktSichtbareKreiseTemp = new ArrayList<>();
 
 		this.listeners = new HashMap<>();
+
+		this.viewSettings = new HashMap<>();
+		viewSettings.put(ObjectVerwaltungSettingFields.BULLSEYE, ObjectVerwaltungSettingValues.BULLSEYE_OFF);
 
 		CalcRelevanzThread crt = new CalcRelevanzThread();
 		crt.start();
@@ -74,7 +87,7 @@ public class ObjektVerwaltung {
 		}
 		long dt = System.nanoTime() - lastUpdate;
 		if (b != null) {
-			//Setze Fokus auf Fokusiertes Objekt
+			// Setze Fokus auf Fokusiertes Objekt
 			if (b.getClass().equals(Betrachter_FocusObject.class)) {
 				((Betrachter_FocusObject) b).setFocusObject(focusedObjekt);
 			}
@@ -110,7 +123,8 @@ public class ObjektVerwaltung {
 		// Bestimme Relevanz aller Kreise
 		for (KreisObjekt k : kreise) {
 
-			int relevanz = k.calcRelevanz(b, metereologischeSichtweite, sichtAufloesung, screenRadius);
+			int relevanz = k.calcRelevanz(b, metereologischeSichtweite, sichtAufloesung, screenRadius,
+					viewSettings.get(ObjectVerwaltungSettingFields.BULLSEYE));
 
 			if (relevanz == 1) {
 				entferntRelevanteKreiseTemp.add(k);
@@ -151,7 +165,6 @@ public class ObjektVerwaltung {
 			// System.out.println("Calc Übertrag - Dauer: " + (System.currentTimeMillis() -
 			// start_uebertrag));
 		}
-		
 
 		if (listeners != null) {
 			if (listeners.containsKey(EUpdateTopic.RELEVANZEN)) {
@@ -177,13 +190,15 @@ public class ObjektVerwaltung {
 			double entferntleistenHoehe = 30;
 
 			// Schablone für runden Screen
-			Ellipse2D aussenloch = new Ellipse2D.Double(b.getX() - screenRadius, b.getY() - screenRadius, 2 * (screenRadius), 2 * (screenRadius));
-			g.setClip(aussenloch);
+			if (viewSettings.get(ObjectVerwaltungSettingFields.BULLSEYE).equals(ObjectVerwaltungSettingValues.BULLSEYE_ON)) {
+				Ellipse2D aussenloch = new Ellipse2D.Double(b.getX() - screenRadius, b.getY() - screenRadius, 2 * (screenRadius), 2 * (screenRadius));
+				g.setClip(aussenloch);
 
-			// die nächsten X Entfernten anzeigen:
-			for (int i = entferntSichtbareKreise.size() - 100; i < entferntSichtbareKreise.size(); i++) {
-				if (i >= 0) {
-					entferntSichtbareKreise.get(i).drawEntfernt(g, b, screenRadius, entferntleistenHoehe);
+				// die nächsten X Entfernten anzeigen:
+				for (int i = entferntSichtbareKreise.size() - 100; i < entferntSichtbareKreise.size(); i++) {
+					if (i >= 0) {
+						entferntSichtbareKreise.get(i).drawEntfernt(g, b, screenRadius, entferntleistenHoehe);
+					}
 				}
 			}
 
@@ -194,10 +209,10 @@ public class ObjektVerwaltung {
 
 			// Nahe Kreise
 			for (KreisObjekt k : direktSichtbareKreise) {
-				k.draw(g, b, screenRadius);
+				k.draw(g, b, screenRadius, viewSettings.get(ObjectVerwaltungSettingFields.BULLSEYE));
 			}
 			g.setClip(null);
-			
+
 		}
 
 		// System.out.println("Entfernte Kreise: " + entferntSichtbareKreise.size());
@@ -283,4 +298,11 @@ public class ObjektVerwaltung {
 	public KreisObjekt getFocusedObjekt() {
 		return focusedObjekt;
 	}
+
+	public void setViewSetting(ObjectVerwaltungSettingFields key, ObjectVerwaltungSettingValues value) {
+		if (viewSettings.containsKey(key)) {
+			viewSettings.replace(key, value);
+		}
+	}
+
 }
