@@ -73,16 +73,13 @@ public class RandomObjectsMain {
 		ov.calcRelevanzen();
 
 		OV_Controller tc = new OV_Controller(ov);
-		tc.addKeyHandler((OV_KeyHandler) b);
-		tc.addMouseHandler((OV_MouseHandler) b);
+		tc.addKeyHandler((OV_KeyHandler) b, "Betrachter");
+		tc.addMouseHandler((OV_MouseHandler) b, "Betrachter");
 
 		ov.addUpdateListener(EUpdateTopic.RELEVANZEN, tc);
 
 		OV_ViewContainer v = new OV_ViewContainer(ov, tc);
 		tc.setViewer(v);
-		v.addMouseListener(tc);
-		v.addMouseMotionListener(tc);
-		v.addMouseWheelListener(tc);
 
 		OV_MainFrame mf = new OV_MainFrame(ov, v);
 		mf.addKeyListener(tc);

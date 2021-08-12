@@ -45,12 +45,17 @@ public class FocusOnObject_Betrachter implements Betrachter {
 		if (fokusObjekt != null) {
 			r = fokusObjekt.getRadius() + 3;
 		}
-		g.fillOval((int) (getX() - r), (int) (getY() - r), 2 * r, 2 * r);
+		g.drawOval((int) (getX() - r), (int) (getY() - r), 2 * r, 2 * r);
 	}
 
 	@Override
-	public void drawFixed(Graphics2D g2d, int x, int y) {
-		draw(g2d);
+	public void drawFixed(Graphics2D g, int x, int y) {
+		g.setColor(Color.GREEN);
+		int r = 50;
+		if (fokusObjekt != null) {
+			r = fokusObjekt.getRadius() + 3;
+		}
+		g.drawOval((int) (x - r), (int) (y - r), 2 * r, 2 * r);
 	}
 
 }

@@ -1,5 +1,6 @@
 package lib.ctrl;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -9,6 +10,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import lib.ctrl.gui.Aktion;
@@ -21,8 +23,7 @@ import lib.model.listener.EUpdateTopic;
 import lib.model.listener.UpdateListener;
 import lib.view.OV_ViewContainer;
 
-public class OV_Controller
-		implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, UpdateListener {
+public class OV_Controller implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, UpdateListener {
 
 	private ObjektVerwaltung ov;
 	private OV_ViewContainer v;
@@ -33,16 +34,19 @@ public class OV_Controller
 	private long moveUpdateRate = 10;
 	private int[] aktRealMausPos;
 
-	private List<OV_KeyHandler> keyHandler;
-	private List<OV_MouseHandler> mouseLHandler;
+	private HashMap<String, OV_KeyHandler> keyHandler;
+	private HashMap<String, OV_MouseHandler> mouseHandler;
 
 	// GUI Controller
 	private OV_GUI_Controller gc;
 
+	// Debug
+	private boolean showMouseCoords;
+
 	public OV_Controller(ObjektVerwaltung ov) {
 		this.ov = ov;
-		this.keyHandler = new ArrayList<>();
-		this.mouseLHandler = new ArrayList<>();
+		this.keyHandler = new HashMap<>();
+		this.mouseHandler = new HashMap<>();
 		this.aktRealMausPos = new int[2];
 
 		this.gc = new OV_GUI_Controller();
@@ -53,12 +57,12 @@ public class OV_Controller
 		this.v = v;
 	}
 
-	public void addKeyHandler(OV_KeyHandler l) {
-		this.keyHandler.add(l);
+	public void addKeyHandler(OV_KeyHandler l, String id) {
+		this.keyHandler.put(id, l);
 	}
 
-	public void addMouseHandler(OV_MouseHandler l) {
-		this.mouseLHandler.add(l);
+	public void addMouseHandler(OV_MouseHandler l, String id) {
+		this.mouseHandler.put(id, l);
 	}
 
 	@Override
@@ -66,8 +70,8 @@ public class OV_Controller
 		if (tasten.length > e.getKeyCode()) {
 			tasten[e.getKeyCode()] = true;
 		}
-		for (OV_KeyHandler k : keyHandler) {
-			k.handleUpdate(tasten);
+		for (String id : keyHandler.keySet()) {
+			keyHandler.get(id).handleUpdate(tasten);
 		}
 	}
 
@@ -76,8 +80,8 @@ public class OV_Controller
 		if (tasten.length > e.getKeyCode()) {
 			tasten[e.getKeyCode()] = false;
 		}
-		for (OV_KeyHandler k : keyHandler) {
-			k.handleUpdate(tasten);
+		for (String id : keyHandler.keySet()) {
+			keyHandler.get(id).handleUpdate(tasten);
 		}
 	}
 
@@ -113,8 +117,8 @@ public class OV_Controller
 		if (System.currentTimeMillis() - lastMoveUpdate > moveUpdateRate) {
 			aktRealMausPos = getRealVonScreenKoords(e.getX(), e.getY());
 			lastMoveUpdate = System.currentTimeMillis();
-			for (OV_MouseHandler m : mouseLHandler) {
-				m.handleMouseUpdate(this, v);
+			for (String id : mouseHandler.keySet()) {
+				mouseHandler.get(id).handleMouseUpdate(this, v);
 			}
 			gc.handleMouseMove(aktRealMausPos[0], aktRealMausPos[1]);
 		}
@@ -168,14 +172,14 @@ public class OV_Controller
 			for (KreisObjekt k : ov.getDirektSichtbareKreise()) {
 				ButtonRound b = new ButtonRound((int) k.getPosX(), (int) k.getPosY(), (int) k.getRadius());
 				b.setAktionLinks(new Aktion() {
-					
+
 					@Override
 					public void run() {
 						k.handleEvent(EEventTyp.MAUSKLICK_LINKS);
 					}
 				});
 				b.setAktionRechts(new Aktion() {
-					
+
 					@Override
 					public void run() {
 						k.handleEvent(EEventTyp.MAUSKLICK_RECHTS);
@@ -188,15 +192,20 @@ public class OV_Controller
 	}
 
 	public void draw(Graphics2D g2d) {
-		gc.drawGUIController(g2d);
+		gc.drawGUIController(g2d); // Zeichnet Buttons
+		if (showMouseCoords) {
+			g2d.setColor(Color.BLACK);
+			g2d.drawString("" + aktRealMausPos[0] + "," + aktRealMausPos[1], aktRealMausPos[0], aktRealMausPos[1]);
+		}
 	}
-	
-	/** Debug Funktion zur Anzeige der Mauskoordinaten
+
+	/**
+	 * Debug Funktion zur Anzeige der Mauskoordinaten
 	 * 
 	 * @param enabled
 	 */
 	public void showMouseCoords(boolean enabled) {
-		
+		showMouseCoords = enabled;
 	}
 
 }

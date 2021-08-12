@@ -20,6 +20,7 @@ public interface Betrachter {
 	/**
 	 * Zeichne Betrachter auf ScreenPosition X,Y - Alternative zu draw(). -> Zeichnet Betrachter NACH dem Shiften der Zeichenebene -> Verhindert Ruckeln
 	 * @param g2d
+	 * @param x,y: Position des Objektes auf Screen -> Muss für Drawposition übernommen werden!
 	 */
 	public void drawFixed(Graphics2D g2d, int x, int y);
 }

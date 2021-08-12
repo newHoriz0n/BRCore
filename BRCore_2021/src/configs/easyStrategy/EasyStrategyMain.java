@@ -11,13 +11,15 @@ public class EasyStrategyMain {
 
 	public static void main (String [] args ) {
 		
-		FocusOnPerson_Betrachter b = new FocusOnPerson_Betrachter(1000, 1000);
+		FocusOnObject_Betrachter b = new FocusOnObject_Betrachter();
 		
 		ObjektVerwaltung ov = new ObjektVerwaltung(b);
 		
 		OV_Controller oc = new OV_Controller(ov);
+		oc.showMouseCoords(true);
 		
 		OV_ViewContainer v = new OV_ViewContainer(ov, oc);
+		oc.setViewer(v);
 		
 		OV_MainFrame mf = new OV_MainFrame(ov, v);
 		

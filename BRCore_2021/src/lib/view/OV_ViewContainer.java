@@ -27,6 +27,10 @@ public class OV_ViewContainer extends JPanel {
 		this.ov = ov;
 		this.oc = oc;
 		
+		addMouseListener(oc);
+		addMouseMotionListener(oc);
+		addMouseWheelListener(oc);
+		
 		ov.setView(this);
 
 	}
