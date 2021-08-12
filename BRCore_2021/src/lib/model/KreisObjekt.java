@@ -30,12 +30,12 @@ public class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHandler {
 
 	private HashMap<EEventTyp, Aktion> eventAktionen = new HashMap<>();
 
-	public KreisObjekt(int x, int y, int rad, Color hintergrund, Color rahmen) {
+	public KreisObjekt(int x, int y, int rad, Color hintergrundFarbe, Color rahmenFarbe) {
 		this.posX = x;
 		this.posY = y;
 		this.radius = rad;
-		this.farbeHintergrund = hintergrund;
-		this.farbeRahmen = rahmen;
+		this.farbeHintergrund = hintergrundFarbe;
+		this.farbeRahmen = rahmenFarbe;
 	}
 
 	public int getRadius() {
@@ -69,30 +69,31 @@ public class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHandler {
 	 * @param sichtAufloesung
 	 * @return 0: irrelevant, 1: metereologisch sichtbar, 2: im Screen sichtbar
 	 */
-	public int calcRelevanz(Betrachter b, double metereologischeSichtweite, double sichtAufloesung,
-			double screenRadius) {
+	public int calcRelevanz(Betrachter b, double metereologischeSichtweite, double sichtAufloesung, double screenRadius) {
 
 		// TODO: Berücksichtige Bewegungsgeschwindigkeit in screenRadius
 
-		if (posX > b.getX() - metereologischeSichtweite && posX < b.getX() + metereologischeSichtweite
-				&& posY > b.getY() - metereologischeSichtweite && posY < b.getY() + metereologischeSichtweite) {
+		if (b != null) {
+			if (posX > b.getX() - metereologischeSichtweite && posX < b.getX() + metereologischeSichtweite
+					&& posY > b.getY() - metereologischeSichtweite && posY < b.getY() + metereologischeSichtweite) {
 
-			calcDistanzZu(b.getX(), b.getY());
+				calcDistanzZu(b.getX(), b.getY());
 
-			this.sichtbarkeit = 1 - ((randDistanz - screenRadius) / metereologischeSichtweite);
+				this.sichtbarkeit = 1 - ((randDistanz - screenRadius) / metereologischeSichtweite);
 
-			if (sichtbarkeit > 0) {
-				if (calcSichtwinkelTan() > sichtAufloesung) {
-					if (randDistanz < screenRadius - 100) {
-						return 3;
-					} else if (randDistanz < screenRadius + 100) {
-						return 2;
+				if (sichtbarkeit > 0) {
+					if (calcSichtwinkelTan() > sichtAufloesung) {
+						if (randDistanz < screenRadius - 100) {
+							return 3;
+						} else if (randDistanz < screenRadius + 100) {
+							return 2;
+						}
+						return 1;
 					}
-					return 1;
 				}
 			}
 		}
-		
+
 		return 0;
 
 	}
@@ -122,21 +123,18 @@ public class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHandler {
 
 			g.setColor(farbeHintergrund);
 			g.fillOval((int) (b.getX() + dx * (screenRadius - entferntleistenHoehe / 2) / centerDistanz - r),
-					(int) (b.getY() + dy * (screenRadius - entferntleistenHoehe / 2) / centerDistanz - r),
-					(int) (r * 2), (int) (r * 2));
+					(int) (b.getY() + dy * (screenRadius - entferntleistenHoehe / 2) / centerDistanz - r), (int) (r * 2), (int) (r * 2));
 
 			g.setColor(farbeRahmen);
 			g.drawOval((int) (b.getX() + dx * (screenRadius - entferntleistenHoehe / 2) / centerDistanz - r),
-					(int) (b.getY() + dy * (screenRadius - entferntleistenHoehe / 2) / centerDistanz - r),
-					(int) (r * 2), (int) (r * 2));
+					(int) (b.getY() + dy * (screenRadius - entferntleistenHoehe / 2) / centerDistanz - r), (int) (r * 2), (int) (r * 2));
 
 			double sFaktor = 1 - Math.max(0, Math.min(1, sichtbarkeit));
 
 			// Nebel
 			g.setColor(new Color(255, 255, 255, (int) (255 * sFaktor)));
 			g.fillOval((int) (b.getX() + dx * (screenRadius - entferntleistenHoehe / 2) / centerDistanz - r),
-					(int) (b.getY() + dy * (screenRadius - entferntleistenHoehe / 2) / centerDistanz - r),
-					(int) (r * 2), (int) (r * 2));
+					(int) (b.getY() + dy * (screenRadius - entferntleistenHoehe / 2) / centerDistanz - r), (int) (r * 2), (int) (r * 2));
 
 		}
 	}

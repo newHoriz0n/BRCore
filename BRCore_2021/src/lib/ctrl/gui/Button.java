@@ -49,13 +49,13 @@ public abstract class Button {
 		mouseHoldRechts = false;
 	}
 
-	public void handleMouseRelease(int x, int y, int button) {
+	public void handleMouseRelease(int x, int y, int mouseButton) {
 		if (checkMouseOver(x, y)) {
-			if (button == 1 && aktionLinks != null) {
+			if (mouseButton == 1 && aktionLinks != null) {
 				aktionLinks.run();
 				mouseHoldLinks = false;
 			}
-			if (button == 3 && aktionRechts != null) {
+			if (mouseButton == 3 && aktionRechts != null) {
 				aktionRechts.run();
 				mouseHoldRechts = false;
 			}

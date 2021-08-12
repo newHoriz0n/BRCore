@@ -61,6 +61,7 @@ public class OV_ViewContainer extends JPanel {
 		}
 		g2d.transform(at);
 		
+		oc.drawOverlayGUIs(g2d);
 		ov.getBetrachter().drawFixed(g2d, getWidth() / 2, getHeight() / 2);
 
 	}

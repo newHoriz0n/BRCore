@@ -31,8 +31,9 @@ public class ObjektVerwaltung {
 	private List<KreisObjekt> entferntSichtbareKreiseTemp;
 	private List<KreisObjekt> direktSichtbareKreiseTemp;
 
-	private double sichtAufloesung = 0.01;
+	private KreisObjekt focusedObjekt;
 
+	private double sichtAufloesung = 0.01;
 	private int screenRadius = 400;
 
 	private Betrachter b;
@@ -43,9 +44,7 @@ public class ObjektVerwaltung {
 
 	private HashMap<EUpdateTopic, List<UpdateListener>> listeners;
 
-	public ObjektVerwaltung(Betrachter b) {
-		this.b = b;
-
+	public ObjektVerwaltung() {
 		this.kreise = new ArrayList<>();
 		this.entferntRelevanteKreise = new ArrayList<>();
 		this.entferntSichtbareKreise = new ArrayList<>();
@@ -64,12 +63,18 @@ public class ObjektVerwaltung {
 
 	}
 
+	public void setBetrachter(Betrachter b) {
+		this.b = b;
+	}
+
 	public void updateOV() {
 		if (v != null) {
 			v.updateUI();
 		}
 		long dt = System.nanoTime() - lastUpdate;
-		b.update(dt);
+		if (b != null) {
+			b.update(dt);
+		}
 		lastUpdate = System.nanoTime();
 	}
 
@@ -112,8 +117,7 @@ public class ObjektVerwaltung {
 			}
 
 		}
-		System.out
-				.println("Calc Relevanz - Dauer: " + (System.currentTimeMillis() - start) + " (" + kreise.size() + ")");
+		System.out.println("Calc Relevanz - Dauer: " + (System.currentTimeMillis() - start) + " (" + kreise.size() + ")");
 
 		// long start_sort = System.currentTimeMillis();
 		Collections.sort(direktSichtbareKreiseTemp);
@@ -158,7 +162,7 @@ public class ObjektVerwaltung {
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
 
-//		long start = System.currentTimeMillis();
+		// long start = System.currentTimeMillis();
 
 		// Entfernte Kreise
 
@@ -167,8 +171,7 @@ public class ObjektVerwaltung {
 			double entferntleistenHoehe = 30;
 
 			// Schablone für runden Screen
-			Ellipse2D aussenloch = new Ellipse2D.Double(b.getX() - screenRadius, b.getY() - screenRadius,
-					2 * (screenRadius), 2 * (screenRadius));
+			Ellipse2D aussenloch = new Ellipse2D.Double(b.getX() - screenRadius, b.getY() - screenRadius, 2 * (screenRadius), 2 * (screenRadius));
 			g.setClip(aussenloch);
 
 			// die nächsten X Entfernten anzeigen:
@@ -180,10 +183,8 @@ public class ObjektVerwaltung {
 
 			// Hauptfeld clearen
 			g.setColor(Color.WHITE);
-			g.fillOval((int) (b.getX() - screenRadius + entferntleistenHoehe),
-					(int) (b.getY() - screenRadius + entferntleistenHoehe),
-					(int) (2 * (screenRadius - entferntleistenHoehe)),
-					(int) ((screenRadius - entferntleistenHoehe) * 2));
+			g.fillOval((int) (b.getX() - screenRadius + entferntleistenHoehe), (int) (b.getY() - screenRadius + entferntleistenHoehe),
+					(int) (2 * (screenRadius - entferntleistenHoehe)), (int) ((screenRadius - entferntleistenHoehe) * 2));
 
 			// Nahe Kreise
 			for (KreisObjekt k : direktSichtbareKreise) {
@@ -205,7 +206,7 @@ public class ObjektVerwaltung {
 		} else {
 			sichtAufloesung /= 1.1;
 		}
-		System.out.println(sichtAufloesung);
+		// System.out.println(sichtAufloesung);
 
 		calcRelevanzen();
 
@@ -261,5 +262,13 @@ public class ObjektVerwaltung {
 
 	public List<KreisObjekt> getDirektSichtbareKreise() {
 		return direktSichtbareKreise;
+	}
+
+	public void setFocusedObject(KreisObjekt ko) {
+		this.focusedObjekt = ko;
+	}
+
+	public KreisObjekt getFocusedObjekt() {
+		return focusedObjekt;
 	}
 }
