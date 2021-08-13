@@ -2,16 +2,19 @@ package configs.easyStrategy.gui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.List;
 
 import configs.easyStrategy.game.Ressource;
 import lib.ctrl.gui.OV_GUI_Controller;
+import lib.ctrl.gui.elements.Button;
 
 public class GUI_Ctrl_Ressourcenansicht extends OV_GUI_Controller {
 
 	private Ressource r;
 
 	public GUI_Ctrl_Ressourcenansicht(String titel, int posX, int posY, int width, int height, Ressource r) {
-		super(titel, posX, posY, width, height);
+		super(1, titel, posX, posY, width, height);
 
 		this.r = r;
 	}
@@ -23,9 +26,8 @@ public class GUI_Ctrl_Ressourcenansicht extends OV_GUI_Controller {
 	}
 
 	@Override
-	protected void loadButtons() {
-		// TODO Auto-generated method stub
-
+	protected List<Button> loadButtons() {
+		return new ArrayList<>();
 	}
 
 	@Override

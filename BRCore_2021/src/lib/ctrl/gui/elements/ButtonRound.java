@@ -1,4 +1,4 @@
-package lib.ctrl.gui;
+package lib.ctrl.gui.elements;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

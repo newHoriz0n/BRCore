@@ -3,7 +3,6 @@ package configs.easyStrategy.gui;
 import java.awt.Color;
 
 import configs.easyStrategy.game.Spieler;
-import configs.easyStrategy.game.Stadt;
 import configs.easyStrategy.game.Truppe;
 import lib.ctrl.EEventTyp;
 import lib.ctrl.OV_Controller;

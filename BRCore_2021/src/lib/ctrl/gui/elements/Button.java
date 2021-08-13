@@ -1,6 +1,9 @@
-package lib.ctrl.gui;
+package lib.ctrl.gui.elements;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
+
+import lib.ctrl.gui.Aktion;
 
 public abstract class Button {
 
@@ -13,6 +16,12 @@ public abstract class Button {
 
 	protected Aktion aktionLinks;
 	protected Aktion aktionRechts;
+
+	protected Color fHintergrund = new Color(0, 0, 0, 0);
+	protected Color fRahmen = new Color(0, 0, 0, 0);
+	protected Color fRahmenHover = Color.ORANGE;
+	protected Color fRahmenLinks = Color.RED;
+	protected Color fRahmenRechts = Color.BLUE;
 
 	public void setAktionLinks(Aktion a) {
 		this.aktionLinks = a;
@@ -51,15 +60,39 @@ public abstract class Button {
 
 	public void handleMouseRelease(int x, int y, int mouseButton) {
 		if (checkMouseOver(x, y)) {
-			if (mouseButton == 1 && aktionLinks != null) {
-				aktionLinks.run();
+			if (mouseButton == 1) {
+				if (aktionLinks != null) {
+					aktionLinks.run();
+				}
 				mouseHoldLinks = false;
 			}
-			if (mouseButton == 3 && aktionRechts != null) {
-				aktionRechts.run();
+			if (mouseButton == 3) {
+				if (aktionRechts != null) {
+					aktionRechts.run();
+				}
 				mouseHoldRechts = false;
 			}
 		}
+	}
+
+	public void setHintergrundFarbe(Color fHintergrund) {
+		this.fHintergrund = fHintergrund;
+	}
+
+	public void setRahmenFarbe(Color fRahmen) {
+		this.fRahmen = fRahmen;
+	}
+
+	public void setRahmenHoverFarbe(Color fRahmenHover) {
+		this.fRahmenHover = fRahmenHover;
+	}
+
+	public void setRahmenLinksDruckFarbe(Color fRahmenLinks) {
+		this.fRahmenLinks = fRahmenLinks;
+	}
+
+	public void setRahmenRechtsDruckFarbe(Color fRahmenRechts) {
+		this.fRahmenRechts = fRahmenRechts;
 	}
 
 	public abstract boolean checkMouseOver(int x, int y);

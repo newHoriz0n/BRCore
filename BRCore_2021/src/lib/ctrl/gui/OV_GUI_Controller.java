@@ -2,13 +2,16 @@ package lib.ctrl.gui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 import java.util.List;
+
+import lib.ctrl.gui.elements.Button;
 
 public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller> {
 
 	// Verwaltet Buttons
 
+	private int gruppe;
+	
 	private String titel;
 
 	private boolean visible;
@@ -20,14 +23,16 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 	private Color farbeHintergrund;
 
 	private Object ButtonLock = new Object();
-	private List<Button> buttons = new ArrayList<>();
+	private List<Button> buttons;
 
-	public OV_GUI_Controller(String titel, int posX, int posY, int width, int height) {
+	public OV_GUI_Controller(int gruppe, String titel, int posX, int posY, int width, int height) {
+		this.gruppe = gruppe;
 		this.titel = titel;
 		this.posX = posX;
 		this.posY = posY;
 		this.width = width;
 		this.height = height;
+		this.buttons = loadButtons();
 	}
 
 	public boolean isMouseOver(int mouseX, int mouseY) {
@@ -153,6 +158,10 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 	protected void drawGUIContent(Graphics2D g2d) {
 	}
 
+	public int getGruppe() {
+		return gruppe;
+	}
+	
 	public void setZIndex(int z) {
 		this.zIndex = z;
 	}
@@ -178,33 +187,9 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 		this.height = h;
 	}
 
-	protected abstract void loadButtons();
+	protected abstract List<Button> loadButtons();
 
 	protected abstract int[] getGUICoordsVonScreenCoords(int screenX, int screenY);
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((titel == null) ? 0 : titel.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		OV_GUI_Controller other = (OV_GUI_Controller) obj;
-		if (titel == null) {
-			if (other.titel != null)
-				return false;
-		} else if (!titel.equals(other.titel))
-			return false;
-		return true;
-	}
+	
 
 }

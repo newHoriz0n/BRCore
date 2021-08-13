@@ -15,10 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 
 import lib.ctrl.gui.Aktion;
-import lib.ctrl.gui.Button;
-import lib.ctrl.gui.ButtonRound;
 import lib.ctrl.gui.OV_GUI_Controller;
 import lib.ctrl.gui.OV_Main_GUI_Controller;
+import lib.ctrl.gui.elements.Button;
+import lib.ctrl.gui.elements.ButtonRound;
 import lib.model.KreisObjekt;
 import lib.model.OV_Model;
 import lib.model.ObjektVerwaltung;
@@ -249,14 +249,14 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 	}
 
 	public void addOverLayGC(OV_GUI_Controller gc) {
-		removeOverlayGC(gc.getTitel());
+		removeOverlayGC(gc.getGruppe());
 		overlay_gcs.add(gc);
 		Collections.sort(overlay_gcs);
 	}
 
-	public void removeOverlayGC(String id) {
+	public void removeOverlayGC(int gruppe) {
 		for (int i = overlay_gcs.size() - 1; i >= 0; i--) {
-			if (overlay_gcs.get(i).getTitel().equals(id)) {
+			if (overlay_gcs.get(i).getGruppe() == gruppe) {
 				overlay_gcs.remove(i);
 			}
 		}
