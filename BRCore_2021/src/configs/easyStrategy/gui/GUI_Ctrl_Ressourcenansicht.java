@@ -8,13 +8,14 @@ import java.util.List;
 import configs.easyStrategy.game.Ressource;
 import lib.ctrl.gui.OV_GUI_Controller;
 import lib.ctrl.gui.elements.Button;
+import lib.model.OV_Model;
 
 public class GUI_Ctrl_Ressourcenansicht extends OV_GUI_Controller {
 
 	private Ressource r;
 
-	public GUI_Ctrl_Ressourcenansicht(String titel, int posX, int posY, int width, int height, Ressource r) {
-		super(1, titel, posX, posY, width, height);
+	public GUI_Ctrl_Ressourcenansicht(String titel, int posX, int posY, int width, int height, Ressource r, OV_Model m) {
+		super(1, titel, posX, posY, width, height, m);
 
 		this.r = r;
 	}

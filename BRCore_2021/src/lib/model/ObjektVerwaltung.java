@@ -19,7 +19,9 @@ import lib.view.OV_ViewContainer;
 
 public class ObjektVerwaltung {
 
-	private List<KreisObjekt> kreise;
+	// private List<KreisObjekt> kreise;
+
+	private HashMap<String, List<KreisObjekt>> kreisKatalog; // Alle bekannten Kreise einsortiert in Gruppen
 
 	private List<KreisObjekt> entferntRelevanteKreise;
 	private List<KreisObjekt> entferntSichtbareKreise; // Entfernte, die nicht verdeckt sind
@@ -56,7 +58,7 @@ public class ObjektVerwaltung {
 	private HashMap<ObjectVerwaltungSettingFields, ObjectVerwaltungSettingValues> viewSettings;
 
 	public ObjektVerwaltung() {
-		this.kreise = new ArrayList<>();
+		this.kreisKatalog = new HashMap<>();
 		this.entferntRelevanteKreise = new ArrayList<>();
 		this.entferntSichtbareKreise = new ArrayList<>();
 		this.direktSichtbareKreise = new ArrayList<>();
@@ -104,9 +106,14 @@ public class ObjektVerwaltung {
 		return b;
 	}
 
-	public void addKreis(KreisObjekt k) {
+	public void addKreis(KreisObjekt k, String gruppe) {
 		synchronized (addKreisLock) {
-			kreise.add(k);
+			if (kreisKatalog.containsKey(gruppe)) {
+				kreisKatalog.get(gruppe).add(k);
+			} else {
+				kreisKatalog.put(gruppe, new ArrayList<>());
+				kreisKatalog.get(gruppe).add(k);
+			}
 		}
 	}
 
@@ -121,22 +128,28 @@ public class ObjektVerwaltung {
 		double metereologischeSichtweite = 1200;
 
 		// Bestimme Relevanz aller Kreise
-		for (KreisObjekt k : kreise) {
+		
+		int anzahlKreise = 0;
+		
+		for (String s : kreisKatalog.keySet()) {
+			anzahlKreise += kreisKatalog.get(s).size();
+			for (KreisObjekt k : kreisKatalog.get(s)) {
 
-			int relevanz = k.calcRelevanz(b, metereologischeSichtweite, sichtAufloesung, screenRadius,
-					viewSettings.get(ObjectVerwaltungSettingFields.BULLSEYE));
+				int relevanz = k.calcRelevanz(b, metereologischeSichtweite, sichtAufloesung, screenRadius,
+						viewSettings.get(ObjectVerwaltungSettingFields.BULLSEYE));
 
-			if (relevanz == 1) {
-				entferntRelevanteKreiseTemp.add(k);
-			} else if (relevanz == 2) {
-				entferntRelevanteKreiseTemp.add(k);
-				direktSichtbareKreiseTemp.add(k);
-			} else if (relevanz == 3) {
-				direktSichtbareKreiseTemp.add(k);
+				if (relevanz == 1) {
+					entferntRelevanteKreiseTemp.add(k);
+				} else if (relevanz == 2) {
+					entferntRelevanteKreiseTemp.add(k);
+					direktSichtbareKreiseTemp.add(k);
+				} else if (relevanz == 3) {
+					direktSichtbareKreiseTemp.add(k);
+				}
+				
 			}
-
 		}
-		System.out.println("Calc Relevanz - Dauer: " + (System.currentTimeMillis() - start) + " (" + kreise.size() + ")");
+		System.out.println("Calc Relevanz - Dauer: " + (System.currentTimeMillis() - start) + " (" + anzahlKreise + ")");
 
 		// long start_sort = System.currentTimeMillis();
 		Collections.sort(direktSichtbareKreiseTemp);

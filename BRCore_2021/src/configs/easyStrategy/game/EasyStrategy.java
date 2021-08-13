@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import configs.easyStrategy.game.Ressource.RessourcenTyp;
-import configs.easyStrategy.gui.KO_Ressource;
-import configs.easyStrategy.gui.KO_Stadt;
-import configs.easyStrategy.gui.KO_Truppe;
 import lib.model.KreisObjekt;
 import lib.model.OV_Model;
 
@@ -16,9 +13,6 @@ public class EasyStrategy extends OV_Model {
 	private boolean geladen;
 
 	// private List<Spieler> spieler;
-	private List<Stadt> staedte;
-	private List<Truppe> truppen;
-	private List<Ressource> ressourcen;
 
 	public EasyStrategy(int spielerZahl) {
 		this.spielerZahl = spielerZahl;
@@ -39,40 +33,36 @@ public class EasyStrategy extends OV_Model {
 	}
 
 	private void loadRessourcen() {
-		this.ressourcen = new ArrayList<>();
 		addRessource(RessourcenTyp.WALD, 150, 300, 400);
 	}
 
 	private void addRessource(RessourcenTyp typ, int posX, int posY, int anzahl) {
-		Ressource r = new Ressource(typ, posX, posY, anzahl);
-		KreisObjekt k = new KO_Ressource(r, oc);
-		ressourcen.add(r);
-		ov.addKreis(k);
+		Ressource r = new Ressource(typ, posX, posY, anzahl, oc);
+		ov.addKreis(r, "Ressourcen");
 	}
 
 	private void loadTruppen() {
-		this.truppen = new ArrayList<>();
-		addTruppe("Römer", 550, 0, 0);
+		requestTruppe("Römer", 550, 0, 0);
 	}
 
-	private void addTruppe(String name, int posX, int posY, int spielerID) {
-		Truppe t = new Truppe(name, posX, posY, spielerID);
-		KreisObjekt k = new KO_Truppe(t, oc);
-		truppen.add(t);
-		ov.addKreis(k);
+	private void addTruppe(Truppe t) {
+		ov.addKreis(t, "Truppen");
+	}
+
+	public Truppe requestTruppe(String name, double posX, double posY, int spielerID) {
+		Truppe t = new Truppe(name, posX, posY, spielerID, oc);
+		addTruppe(t);
+		return t;
 	}
 
 	private void loadStaedte() {
-		this.staedte = new ArrayList<>();
 		addStadt("Feindstadt", 1100, 0, 0);
 		addStadt("Hauptstadt", 100, 0, 1);
 	}
 
-	private void addStadt(String name, int posX, int posY, int spielerID) {
-		Stadt s = new Stadt(name, posX, posY, spielerID);
-		KreisObjekt k = new KO_Stadt(s, oc);
-		staedte.add(s);
-		ov.addKreis(k);
+	private void addStadt(String name, double posX, double posY, int spielerID) {
+		Stadt s = new Stadt(name, posX, posY, spielerID, oc);
+		ov.addKreis(s, "Staedte");
 	}
 
 	@Override

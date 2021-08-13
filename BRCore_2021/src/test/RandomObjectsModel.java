@@ -51,7 +51,7 @@ public class RandomObjectsModel extends OV_Model {
 				}
 			});
 
-			ov.addKreis(k);
+			ov.addKreis(k, "global");
 
 		}
 	

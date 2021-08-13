@@ -5,11 +5,14 @@ import java.awt.Graphics2D;
 import java.util.List;
 
 import lib.ctrl.gui.elements.Button;
+import lib.model.OV_Model;
 
 public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller> {
 
 	// Verwaltet Buttons
 
+	protected OV_Model m;
+	
 	private int gruppe;
 	
 	private String titel;
@@ -25,7 +28,8 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 	private Object ButtonLock = new Object();
 	private List<Button> buttons;
 
-	public OV_GUI_Controller(int gruppe, String titel, int posX, int posY, int width, int height) {
+	public OV_GUI_Controller(int gruppe, String titel, int posX, int posY, int width, int height, OV_Model m) {
+		this.m = m;
 		this.gruppe = gruppe;
 		this.titel = titel;
 		this.posX = posX;
@@ -43,20 +47,6 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 		this.farbeHintergrund = f;
 	}
 
-	public void setCurrentButtons(List<Button> bs) {
-		synchronized (ButtonLock) {
-			for (Button b : bs) {
-				if (!buttons.contains(b)) {
-					buttons.add(b);
-				}
-			}
-			for (int i = buttons.size() - 1; i >= 0; i--) {
-				if (!bs.contains(buttons.get(i))) {
-					buttons.remove(i);
-				}
-			}
-		}
-	}
 
 	public boolean handleMouseMove(int aktScreenMouseX, int aktScreenMouseY, int aktRealMausPosX, int aktRealMausPosY, int button) {
 		if (isMouseOver(aktScreenMouseX, aktScreenMouseY)) {
@@ -188,8 +178,35 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 	}
 
 	protected abstract List<Button> loadButtons();
+	
+	public void addButton(Button b) {
+		this.buttons.add(b);
+	}
+	
+	public void removeButton(Button b) {
+		this.buttons.remove(b);
+	}
+
+	public void setCurrentButtons(List<Button> bs) {
+		synchronized (ButtonLock) {
+			for (Button b : bs) {
+				if (!buttons.contains(b)) {
+					buttons.add(b);
+				}
+			}
+			for (int i = buttons.size() - 1; i >= 0; i--) {
+				if (!bs.contains(buttons.get(i))) {
+					buttons.remove(i);
+				}
+			}
+		}
+	}
 
 	protected abstract int[] getGUICoordsVonScreenCoords(int screenX, int screenY);
+
 	
+	public OV_Model getModel() {
+		return m;
+	}
 
 }

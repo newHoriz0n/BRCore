@@ -55,7 +55,7 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 		this.mouseHandler = new HashMap<>();
 		this.aktRealMausPos = new int[2];
 
-		this.main_gc = new OV_Main_GUI_Controller("Main", 0, 0, 0, 0);
+		this.main_gc = new OV_Main_GUI_Controller("Main", 0, 0, 0, 0, m);
 
 	}
 
@@ -260,6 +260,10 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 				overlay_gcs.remove(i);
 			}
 		}
+	}
+	
+	public OV_Model getModel() {
+		return m;
 	}
 
 }

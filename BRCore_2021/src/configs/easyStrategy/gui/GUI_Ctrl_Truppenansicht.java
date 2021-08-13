@@ -8,13 +8,14 @@ import java.util.List;
 import configs.easyStrategy.game.Truppe;
 import lib.ctrl.gui.OV_GUI_Controller;
 import lib.ctrl.gui.elements.Button;
+import lib.model.OV_Model;
 
 public class GUI_Ctrl_Truppenansicht extends OV_GUI_Controller {
 
 	private Truppe t;
 
-	public GUI_Ctrl_Truppenansicht(String titel, int posX, int posY, int width, int height, Truppe t) {
-		super(1, titel, posX, posY, width, height);
+	public GUI_Ctrl_Truppenansicht(String titel, int posX, int posY, int width, int height, Truppe t, OV_Model m) {
+		super(1, titel, posX, posY, width, height, m);
 
 		this.t = t;
 	}

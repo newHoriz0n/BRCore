@@ -14,7 +14,9 @@ import lib.view.Betrachter;
 
 public class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHandler {
 
-	private int radius;
+	private long objectID;
+	
+	protected int radius;
 	private double posX;
 	private double posY;
 
@@ -33,12 +35,17 @@ public class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHandler {
 
 	private HashMap<EEventTyp, Aktion> eventAktionen = new HashMap<>();
 
-	public KreisObjekt(int x, int y, int rad, Color hintergrundFarbe, Color rahmenFarbe) {
+	public KreisObjekt(double x, double y, int rad, Color hintergrundFarbe, Color rahmenFarbe) {
 		this.posX = x;
 		this.posY = y;
 		this.radius = rad;
 		this.farbeHintergrund = hintergrundFarbe;
 		this.farbeRahmen = rahmenFarbe;
+		this.objectID = ObjectIDSingleton.getNextID();
+	}
+	
+	public long getObjectID() {
+		return objectID;
 	}
 
 	public int getRadius() {

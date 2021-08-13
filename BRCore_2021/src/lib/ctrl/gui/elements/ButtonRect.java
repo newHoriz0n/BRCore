@@ -15,7 +15,7 @@ public class ButtonRect extends Button {
 
 	@Override
 	public boolean checkMouseOver(int x, int y) {
-		return (x >= posX && x <= posX + width && y >= posY && posY <= posY + height);
+		return (x >= posX && x <= posX + width && y >= posY && y <= posY + height);
 	}
 
 	@Override
