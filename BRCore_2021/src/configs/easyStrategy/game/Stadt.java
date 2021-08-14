@@ -43,6 +43,9 @@ public class Stadt extends KreisObjekt {
 
 	}
 
+	@Override
+	protected void update(long dt) {	}
+
 	public void setWerte(int arbeiter, int kaempfer, int material) {
 		this.arbeiter = arbeiter;
 		this.kaempfer = kaempfer;
@@ -60,6 +63,15 @@ public class Stadt extends KreisObjekt {
 
 	public void stationiereTruppe(Truppe t) {
 		this.stationierteTruppen.add(t);
+	}
+
+	public void truppeAufloesen(Truppe t) {
+		this.stationierteTruppen.remove(t);
+		// TODO: Truppeneinheiten in Stadt einquartieren.
+	}
+
+	public void truppeEntsenden(Truppe t) {
+		this.stationierteTruppen.remove(t);
 	}
 
 	public List<Truppe> getStationierteTruppen() {

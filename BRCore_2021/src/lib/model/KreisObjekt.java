@@ -12,13 +12,13 @@ import lib.ctrl.gui.Aktion;
 import lib.model.ObjektVerwaltung.ObjectVerwaltungSettingValues;
 import lib.view.Betrachter;
 
-public class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHandler {
+public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHandler {
 
 	private long objectID;
-	
+
 	protected int radius;
-	private double posX;
-	private double posY;
+	protected double posX;
+	protected double posY;
 
 	private double ausrichtung;
 
@@ -35,6 +35,8 @@ public class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHandler {
 
 	private HashMap<EEventTyp, Aktion> eventAktionen = new HashMap<>();
 
+	private long lastUpdate;
+
 	public KreisObjekt(double x, double y, int rad, Color hintergrundFarbe, Color rahmenFarbe) {
 		this.posX = x;
 		this.posY = y;
@@ -42,8 +44,17 @@ public class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHandler {
 		this.farbeHintergrund = hintergrundFarbe;
 		this.farbeRahmen = rahmenFarbe;
 		this.objectID = ObjectIDSingleton.getNextID();
+		this.lastUpdate = System.currentTimeMillis();
 	}
-	
+
+	public void updateKO() {
+		long dt = System.currentTimeMillis() - lastUpdate;
+		lastUpdate = System.currentTimeMillis();
+		update(dt);
+	}
+
+	protected abstract void update(long dt);
+
 	public long getObjectID() {
 		return objectID;
 	}
@@ -58,6 +69,11 @@ public class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHandler {
 
 	public double getPosY() {
 		return posY;
+	}
+
+	public void setPosition(double x, double y) {
+		this.posX = x;
+		this.posY = y;
 	}
 
 	public void setBild(BufferedImage img) {

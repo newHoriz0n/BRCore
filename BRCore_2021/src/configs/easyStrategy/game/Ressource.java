@@ -23,9 +23,9 @@ public class Ressource extends KreisObjekt {
 		this.typ = typ;
 		this.anzahl = anzahl;
 		calcRadius();
-		
+
 		Ressource me = this;
-		
+
 		setEventAktion(EEventTyp.MAUSKLICK_LINKS, new Aktion() {
 
 			@Override
@@ -36,8 +36,11 @@ public class Ressource extends KreisObjekt {
 				oc.addOverLayGC(sc);
 			}
 		});
-		
+
 	}
+
+	@Override
+	protected void update(long dt) {	}
 
 	public void abbauen(int anzahl) {
 		this.anzahl -= anzahl;

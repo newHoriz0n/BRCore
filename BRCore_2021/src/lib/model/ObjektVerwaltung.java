@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import configs.easyStrategy.game.Truppe;
 import lib.model.listener.EUpdateTopic;
 import lib.model.listener.UpdateListener;
 import lib.view.Betrachter;
@@ -83,7 +84,15 @@ public class ObjektVerwaltung {
 		this.b = b;
 	}
 
-	public void updateOV() {
+	public void updateObjekte() {
+		for (String s : kreisKatalog.keySet()) {
+			for (KreisObjekt k : kreisKatalog.get(s)) {
+				k.updateKO();
+			}
+		}
+	}
+
+	public void updateView() {
 		if (v != null) {
 			v.updateUI();
 		}
@@ -128,9 +137,9 @@ public class ObjektVerwaltung {
 		double metereologischeSichtweite = 1200;
 
 		// Bestimme Relevanz aller Kreise
-		
+
 		int anzahlKreise = 0;
-		
+
 		for (String s : kreisKatalog.keySet()) {
 			anzahlKreise += kreisKatalog.get(s).size();
 			for (KreisObjekt k : kreisKatalog.get(s)) {
@@ -146,7 +155,7 @@ public class ObjektVerwaltung {
 				} else if (relevanz == 3) {
 					direktSichtbareKreiseTemp.add(k);
 				}
-				
+
 			}
 		}
 		System.out.println("Calc Relevanz - Dauer: " + (System.currentTimeMillis() - start) + " (" + anzahlKreise + ")");
@@ -260,7 +269,7 @@ public class ObjektVerwaltung {
 
 				@Override
 				public void run() {
-					updateOV();
+					updateView();
 				}
 			};
 			t.scheduleAtFixedRate(tt, 0, 30);
@@ -316,6 +325,10 @@ public class ObjektVerwaltung {
 		if (viewSettings.containsKey(key)) {
 			viewSettings.replace(key, value);
 		}
+	}
+
+	public void removeKreis(Truppe t, String gruppe) {
+		kreisKatalog.get(gruppe).remove(t);
 	}
 
 }

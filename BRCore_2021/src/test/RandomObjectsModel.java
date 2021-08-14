@@ -31,7 +31,7 @@ public class RandomObjectsModel extends OV_Model {
 		}
 
 		for (int i = 0; i < 1000000; i++) {
-			KreisObjekt k = new KreisObjekt(r.nextInt(700000), r.nextInt(700000), 5 + r.nextInt(100),
+			KreisObjekt k = new RandomObject(r.nextInt(700000), r.nextInt(700000), 5 + r.nextInt(100),
 					new Color(r.nextInt(255), r.nextInt(255), r.nextInt(255), 0), new Color(r.nextInt(255), r.nextInt(255), r.nextInt(255)));
 
 			k.setBild(img);

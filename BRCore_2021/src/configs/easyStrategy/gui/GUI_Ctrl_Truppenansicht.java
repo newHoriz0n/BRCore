@@ -36,4 +36,10 @@ public class GUI_Ctrl_Truppenansicht extends OV_GUI_Controller {
 		return new int[] { screenX - posX, screenY - posY };
 	}
 
+	@Override
+	public void handleFreeMouseRelease(int mouseX, int mouseY, int button) {	}
+
+	@Override
+	public void updateGUICtrl() {	}
+
 }

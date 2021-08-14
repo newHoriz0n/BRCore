@@ -2,6 +2,7 @@ package lib.ctrl.gui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.List;
 
 import lib.ctrl.gui.elements.Button;
@@ -12,9 +13,9 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 	// Verwaltet Buttons
 
 	protected OV_Model m;
-	
+
 	private int gruppe;
-	
+
 	private String titel;
 
 	private boolean visible;
@@ -26,7 +27,11 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 	private Color farbeHintergrund;
 
 	private Object ButtonLock = new Object();
-	private List<Button> buttons;
+
+	protected List<Button> buttons;
+	private List<Button> tempButtons;
+
+	private boolean freeMousePress = true; // Maus hat bei Mauspress keinen Button gedrückt.
 
 	public OV_GUI_Controller(int gruppe, String titel, int posX, int posY, int width, int height, OV_Model m) {
 		this.m = m;
@@ -37,8 +42,11 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 		this.width = width;
 		this.height = height;
 		this.buttons = loadButtons();
+		this.tempButtons = new ArrayList<>(buttons);
 	}
 
+	public abstract void updateGUICtrl();
+	
 	public boolean isMouseOver(int mouseX, int mouseY) {
 		return (mouseX >= posX && mouseX <= posX + width && mouseY >= posY && mouseY <= posY + height);
 	}
@@ -47,9 +55,9 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 		this.farbeHintergrund = f;
 	}
 
-
 	public boolean handleMouseMove(int aktScreenMouseX, int aktScreenMouseY, int aktRealMausPosX, int aktRealMausPosY, int button) {
 		if (isMouseOver(aktScreenMouseX, aktScreenMouseY)) {
+			updateTempButtons();
 			for (Button b : buttons) {
 				b.handleMouseMove(aktRealMausPosX, aktRealMausPosY);
 			}
@@ -61,6 +69,7 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 	public boolean handleMouseMoveIntern(int aktScreenMouseX, int aktScreenMouseY, int button) {
 		if (isMouseOver(aktScreenMouseX, aktScreenMouseY)) {
 			int[] internMausCoords = getGUICoordsVonScreenCoords(aktScreenMouseX, aktScreenMouseY);
+			updateTempButtons();
 			for (Button b : buttons) {
 				b.handleMouseMove(internMausCoords[0], internMausCoords[1]);
 			}
@@ -71,8 +80,12 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 
 	public boolean handleMousePress(int aktScreenMouseX, int aktScreenMouseY, int aktRealMausPosX, int aktRealMausPosY, int button) {
 		if (isMouseOver(aktScreenMouseX, aktScreenMouseY)) {
+			updateTempButtons();
+			freeMousePress = true;
 			for (Button b : buttons) {
-				b.handleMousePress(aktRealMausPosX, aktRealMausPosY, button);
+				if (b.handleMousePress(aktRealMausPosX, aktRealMausPosY, button)) {
+					freeMousePress = false;
+				}
 			}
 			active = true;
 			return true;
@@ -85,8 +98,12 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 	public boolean handleMousePressIntern(int aktScreenMouseX, int aktScreenMouseY, int button) {
 		if (isMouseOver(aktScreenMouseX, aktScreenMouseY)) {
 			int[] internMausCoords = getGUICoordsVonScreenCoords(aktScreenMouseX, aktScreenMouseY);
+			updateTempButtons();
+			freeMousePress = true;
 			for (Button b : buttons) {
-				b.handleMousePress(internMausCoords[0], internMausCoords[1], button);
+				if (b.handleMousePress(internMausCoords[0], internMausCoords[1], button)) {
+					freeMousePress = false;
+				}
 			}
 			active = true;
 			return true;
@@ -98,24 +115,35 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 
 	public boolean handleMouseRelease(int aktScreenMouseX, int aktScreenMouseY, int aktRealMausPosX, int aktRealMausPosY, int button) {
 		if (isMouseOver(aktScreenMouseX, aktScreenMouseY)) {
+			updateTempButtons();
 			for (Button b : buttons) {
 				b.handleMouseRelease(aktRealMausPosX, aktRealMausPosY, button);
+			}
+			if (freeMousePress) {
+				handleFreeMouseRelease(aktRealMausPosX, aktRealMausPosY, button);
+			}
+			return true;
+		}
+		return false;
+
+	}
+
+	public boolean handleMouseReleaseIntern(int aktScreenMouseX, int aktScreenMouseY, int button) {
+		if (isMouseOver(aktScreenMouseX, aktScreenMouseY)) {
+			int[] internMausCoords = getGUICoordsVonScreenCoords(aktScreenMouseX, aktScreenMouseY);
+			updateTempButtons();
+			for (Button b : buttons) {
+				b.handleMouseRelease(internMausCoords[0], internMausCoords[1], button);
+			}
+			if (freeMousePress) {
+				handleFreeMouseRelease(internMausCoords[0], internMausCoords[1], button);
 			}
 			return true;
 		}
 		return false;
 	}
 
-	public boolean handleMouseReleaseIntern(int aktScreenMouseX, int aktScreenMouseY, int button) {
-		if (isMouseOver(aktScreenMouseX, aktScreenMouseY)) {
-			int[] internMausCoords = getGUICoordsVonScreenCoords(aktScreenMouseX, aktScreenMouseY);
-			for (Button b : buttons) {
-				b.handleMouseRelease(internMausCoords[0], internMausCoords[1], button);
-			}
-			return true;
-		}
-		return false;
-	}
+	public abstract void handleFreeMouseRelease(int realMouseX, int realMouseY, int button);
 
 	/**
 	 * Use drawGUIContent() um eigene Inhalte zu zeichnen
@@ -135,6 +163,8 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 				g.translate(posX, posY);
 			}
 			drawGUIContent(g);
+
+			updateTempButtons();
 			for (Button b : buttons) {
 				b.draw(g);
 			}
@@ -151,7 +181,7 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 	public int getGruppe() {
 		return gruppe;
 	}
-	
+
 	public void setZIndex(int z) {
 		this.zIndex = z;
 	}
@@ -178,25 +208,41 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 	}
 
 	protected abstract List<Button> loadButtons();
-	
-	public void addButton(Button b) {
-		this.buttons.add(b);
+
+	public void updateTempButtons() {
+		synchronized (ButtonLock) {
+			buttons.clear();
+			buttons.addAll(tempButtons);
+		}
 	}
-	
+
+	public void addButton(Button b) {
+		this.tempButtons.add(b);
+	}
+
 	public void removeButton(Button b) {
-		this.buttons.remove(b);
+		this.tempButtons.remove(b);
+	}
+
+	public void removeButtons(List<Button> removeList) {
+		tempButtons.removeAll(removeList);
+	}
+
+	public void addButtons(List<Button> addList) {
+		tempButtons.addAll(addList);
+
 	}
 
 	public void setCurrentButtons(List<Button> bs) {
 		synchronized (ButtonLock) {
 			for (Button b : bs) {
-				if (!buttons.contains(b)) {
-					buttons.add(b);
+				if (!tempButtons.contains(b)) {
+					tempButtons.add(b);
 				}
 			}
 			for (int i = buttons.size() - 1; i >= 0; i--) {
-				if (!bs.contains(buttons.get(i))) {
-					buttons.remove(i);
+				if (!bs.contains(tempButtons.get(i))) {
+					tempButtons.remove(i);
 				}
 			}
 		}
@@ -204,7 +250,6 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 
 	protected abstract int[] getGUICoordsVonScreenCoords(int screenX, int screenY);
 
-	
 	public OV_Model getModel() {
 		return m;
 	}

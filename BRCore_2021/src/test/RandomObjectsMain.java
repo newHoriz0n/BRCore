@@ -16,7 +16,9 @@ public class RandomObjectsMain {
 		Betrachter b = new Betrachter_FocusPerson(50000, 50000);
 		m.setBetrachter(b);
 
-		OV_Controller tc = new OV_Controller(m);
+		RandomObjectsGUICtrl ctrl = new RandomObjectsGUICtrl(m);
+		
+		OV_Controller tc = new OV_Controller(m, ctrl);
 		tc.addKeyHandler((OV_KeyHandler) b, "Betrachter");
 		tc.addMouseHandler((OV_MouseHandler) b, "Betrachter");
 

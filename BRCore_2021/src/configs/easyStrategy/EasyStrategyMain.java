@@ -1,6 +1,7 @@
 package configs.easyStrategy;
 
 import configs.easyStrategy.game.EasyStrategy;
+import configs.easyStrategy.gui.GUI_Ctrl_Main;
 import lib.ctrl.OV_Controller;
 import lib.exe.OV_MainFrame;
 import lib.view.Betrachter_FreierVogel;
@@ -13,7 +14,9 @@ public class EasyStrategyMain {
 		Betrachter_FreierVogel b = new Betrachter_FreierVogel();
 		es.setBetrachter(b);
 
-		OV_Controller oc = new OV_Controller(es);
+		GUI_Ctrl_Main gc_main = new GUI_Ctrl_Main(es);
+		
+		OV_Controller oc = new OV_Controller(es, gc_main);
 		oc.showMouseCoords(true);
 		
 		es.setController(oc);

@@ -16,7 +16,6 @@ import java.util.List;
 
 import lib.ctrl.gui.Aktion;
 import lib.ctrl.gui.OV_GUI_Controller;
-import lib.ctrl.gui.OV_Main_GUI_Controller;
 import lib.ctrl.gui.elements.Button;
 import lib.ctrl.gui.elements.ButtonRound;
 import lib.model.KreisObjekt;
@@ -48,14 +47,14 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 	// Debug
 	private boolean showMouseCoords;
 
-	public OV_Controller(OV_Model m) {
+	public OV_Controller(OV_Model m, OV_GUI_Controller main_gc) {
 		this.m = m;
 		this.ov = m.getObjektVerwaltung();
 		this.keyHandler = new HashMap<>();
 		this.mouseHandler = new HashMap<>();
 		this.aktRealMausPos = new int[2];
 
-		this.main_gc = new OV_Main_GUI_Controller("Main", 0, 0, 0, 0, m);
+		this.main_gc = main_gc;
 
 	}
 
@@ -264,6 +263,13 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 	
 	public OV_Model getModel() {
 		return m;
+	}
+	
+	public void updateGUIs() {
+		main_gc.updateGUICtrl();
+		for (OV_GUI_Controller c : overlay_gcs) {
+			c.updateGUICtrl();
+		}
 	}
 
 }

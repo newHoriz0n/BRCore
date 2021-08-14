@@ -35,7 +35,11 @@ public class ButtonRect extends Button {
 			}
 		} else {
 			g.setColor(fRahmen);
-			g.drawRect(posX, posY, width, height);			
+			g.drawRect(posX, posY, width, height);
+		}
+		if (text != null) {
+			g.setColor(fText);
+			g.drawString(text, posX + 5, posY + 17);
 		}
 	}
 
@@ -69,8 +73,5 @@ public class ButtonRect extends Button {
 			return false;
 		return true;
 	}
-
-	
-	
 
 }

@@ -22,7 +22,15 @@ public abstract class Button {
 	protected Color fRahmenHover = Color.ORANGE;
 	protected Color fRahmenLinks = Color.RED;
 	protected Color fRahmenRechts = Color.BLUE;
+	protected Color fText = Color.BLACK;
+	
+	
+	protected String text;
 
+	public void setText(String text) {
+		this.text = text;
+	}
+	
 	public void setAktionLinks(Aktion a) {
 		this.aktionLinks = a;
 	}
@@ -44,7 +52,7 @@ public abstract class Button {
 		}
 	}
 
-	public void handleMousePress(int x, int y, int button) {
+	public boolean handleMousePress(int x, int y, int button) {
 		if (checkMouseOver(x, y)) {
 			if (button == 1) {
 				mouseHoldLinks = true;
@@ -52,13 +60,14 @@ public abstract class Button {
 			if (button == 3) {
 				mouseHoldRechts = true;
 			}
-			return;
+			return true;
 		}
 		mouseHoldLinks = false;
 		mouseHoldRechts = false;
+		return false;
 	}
 
-	public void handleMouseRelease(int x, int y, int mouseButton) {
+	public boolean handleMouseRelease(int x, int y, int mouseButton) {
 		if (checkMouseOver(x, y)) {
 			if (mouseButton == 1) {
 				if (aktionLinks != null) {
@@ -72,7 +81,9 @@ public abstract class Button {
 				}
 				mouseHoldRechts = false;
 			}
+			return true;
 		}
+		return false;
 	}
 
 	public void setHintergrundFarbe(Color fHintergrund) {
@@ -93,6 +104,10 @@ public abstract class Button {
 
 	public void setRahmenRechtsDruckFarbe(Color fRahmenRechts) {
 		this.fRahmenRechts = fRahmenRechts;
+	}
+	
+	public void setTextFarbe(Color fText) {
+		this.fText = fText;
 	}
 
 	public abstract boolean checkMouseOver(int x, int y);
