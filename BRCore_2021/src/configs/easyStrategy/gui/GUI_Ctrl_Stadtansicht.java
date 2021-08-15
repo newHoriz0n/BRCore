@@ -9,6 +9,7 @@ import java.util.List;
 import configs.easyStrategy.game.EasyStrategy;
 import configs.easyStrategy.game.Stadt;
 import configs.easyStrategy.game.Truppe;
+import lib.ctrl.OV_Controller;
 import lib.ctrl.gui.Aktion;
 import lib.ctrl.gui.OV_GUI_Controller;
 import lib.ctrl.gui.elements.Button;
@@ -21,8 +22,9 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 	private int offYtruppenButtons = 270;
 	private List<Button> truppenButtons = new ArrayList<>();
 
-	public GUI_Ctrl_Stadtansicht(String titel, int posX, int posY, int width, int height, Stadt s, OV_Model m) {
-		super(1, titel, posX, posY, width, height, m);
+	public GUI_Ctrl_Stadtansicht(OV_Controller oc, Stadt s, OV_Model m) {
+		super(1, "Stadtansicht", oc.getViewer().getWidth() - 300, 0, 300,
+				oc.getViewer().getHeight(), m);
 		this.s = s;
 
 		updateTruppenButtons();

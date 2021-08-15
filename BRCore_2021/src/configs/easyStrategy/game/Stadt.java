@@ -45,8 +45,7 @@ public class Stadt extends KreisObjekt {
 
 			@Override
 			public void run() {
-				OV_GUI_Controller sc = new GUI_Ctrl_Stadtansicht("Stadtdetailansicht", oc.getViewer().getWidth() - 300, 0, 300,
-						oc.getViewer().getHeight(), me, oc.getModel());
+				OV_GUI_Controller sc = new GUI_Ctrl_Stadtansicht(oc, me, oc.getModel());
 				sc.setHintergrundFarbe(Color.BLACK);
 				oc.addOverLayGC(sc);
 			}

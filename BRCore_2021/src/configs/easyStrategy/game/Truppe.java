@@ -15,8 +15,8 @@ public class Truppe extends KreisObjekt {
 
 	private String name;
 	private int spielerID;
-	private int kaempfer;
 
+	private int kaempfer;
 	private int material;
 	private int arbeiter;
 
@@ -71,10 +71,14 @@ public class Truppe extends KreisObjekt {
 		}
 	}
 
+	public void stationiereTruppe() {
+		this.ziel = null;
+	}
+
 	public void addMaterial(int anzahl) {
 		this.material += anzahl;
 	}
-	
+
 	public boolean materialVerwenden(int anzahl) {
 		if (this.material >= anzahl) {
 			this.material -= anzahl;
@@ -86,7 +90,7 @@ public class Truppe extends KreisObjekt {
 	public void addArbeiter(int anzahl) {
 		this.arbeiter += anzahl;
 	}
-	
+
 	public boolean arbeiterVerwenden(int anzahl) {
 		if (this.arbeiter >= anzahl) {
 			this.arbeiter -= anzahl;

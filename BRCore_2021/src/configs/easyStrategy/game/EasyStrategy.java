@@ -1,5 +1,6 @@
 package configs.easyStrategy.game;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -8,6 +9,9 @@ import java.util.TimerTask;
 
 import configs.easyStrategy.game.Ressource.RessourcenTyp;
 import configs.easyStrategy.game.ki.ES_KI;
+import configs.easyStrategy.gui.GUI_Ctrl_Stadtansicht;
+import configs.easyStrategy.gui.GUI_Ctrl_Truppenansicht;
+import lib.ctrl.gui.OV_GUI_Controller;
 import lib.math.Vektor3D;
 import lib.model.KreisObjekt;
 import lib.model.OV_Model;
@@ -21,7 +25,7 @@ public class EasyStrategy extends OV_Model {
 	private Random r = new Random();
 
 	public enum ES_State {
-		STANDARD, TRUPPE_PLATZIEREN, TRUPPE_BEWEGEN
+		STANDARD, TRUPPE_AUSSENDEN, TRUPPE_BEWEGEN
 	};
 
 	private ES_State state = ES_State.STANDARD;
@@ -135,10 +139,20 @@ public class EasyStrategy extends OV_Model {
 		addStadt("Hauptstadt", 100, 0, 1, 10, 10, 2);
 	}
 
-	private void addStadt(String name, double posX, double posY, int spielerID, int material, int arbeiter, int kaempfer) {
+	public Stadt requestStadt(String name, double posX, double posY, int spielerID) {
+		for (KreisObjekt os : ov.getKreisVonKategorie("Staedte")) {
+			if (os.calcDistanzZu(posX, posY) < os.getRadius() + 50) {
+				return null;
+			}
+		}
+		return addStadt(name, posX, posY, spielerID, 0, 0, 0);
+	}
+
+	private Stadt addStadt(String name, double posX, double posY, int spielerID, int material, int arbeiter, int kaempfer) {
 		Stadt s = new Stadt(name, posX, posY, spielerID, oc);
 		s.setWerte(arbeiter, kaempfer, material);
 		ov.addKreis(s, "Staedte");
+		return s;
 	}
 
 	@Override
@@ -147,7 +161,7 @@ public class EasyStrategy extends OV_Model {
 	}
 
 	public void truppeEntsenden(Stadt s, Truppe t) {
-		setState(ES_State.TRUPPE_PLATZIEREN);
+		setState(ES_State.TRUPPE_AUSSENDEN);
 		focusTruppe = t;
 		focusStadt = s;
 	}
@@ -222,6 +236,17 @@ public class EasyStrategy extends OV_Model {
 			}
 		}
 		return staedte;
+	}
+
+	public void stationiereTruppeInStadt(Stadt s, Truppe t) {
+		s.stationiereTruppe(t);
+		t.stationiereTruppe();
+
+		OV_GUI_Controller sc = new GUI_Ctrl_Stadtansicht(oc, s, this);
+		sc.setHintergrundFarbe(Color.BLACK);
+		oc.addOverLayGC(sc);
+		focusTruppe = null;
+		focusStadt = s;
 	}
 
 }

@@ -16,11 +16,9 @@ public class ES_KI {
 	private double ausbildung_standard = 0.2; // Anteil Kaempfer im Normalzustand
 
 	public void calc(EasyStrategy es, int spielerID) {
-
 		if (System.currentTimeMillis() - lastStrategieUpdate > 1000) {
 			calcStrategieUpdate(es, spielerID);
 		}
-
 	}
 
 	public void calcStrategieUpdate(EasyStrategy es, int spielerID) {

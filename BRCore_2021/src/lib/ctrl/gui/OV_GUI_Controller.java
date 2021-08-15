@@ -45,8 +45,11 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 		this.tempButtons = new ArrayList<>(buttons);
 	}
 
+	/**
+	 * Methode zur definition von Aktionen, die bei Aktualisierung der GUI ausgeführt werden sollen.
+	 */
 	public abstract void updateGUICtrl();
-	
+
 	public boolean isMouseOver(int mouseX, int mouseY) {
 		return (mouseX >= posX && mouseX <= posX + width && mouseY >= posY && mouseY <= posY + height);
 	}
@@ -170,17 +173,28 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 			}
 
 			drawGUIOverlay(g);
-			
+
 			if (transform) {
 				g.translate(-posX, -posY);
 			}
 
+			drawGUIStaticOverlay(g);
+
 		}
+	}
+
+	/**
+	 * Zeichnet ohne Transformierung drüber (Geht nur für OverlayGUIs, nicht für
+	 * MAIN!)
+	 * 
+	 * @param g
+	 */
+	protected void drawGUIStaticOverlay(Graphics2D g2d) {
 	}
 
 	protected void drawGUIBackground(Graphics2D g2d) {
 	}
-	
+
 	protected void drawGUIOverlay(Graphics2D g2d) {
 	}
 

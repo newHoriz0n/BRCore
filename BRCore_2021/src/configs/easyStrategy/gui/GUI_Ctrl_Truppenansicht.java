@@ -6,7 +6,10 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import configs.easyStrategy.game.EasyStrategy;
+import configs.easyStrategy.game.Stadt;
 import configs.easyStrategy.game.Truppe;
+import lib.ctrl.gui.Aktion;
 import lib.ctrl.gui.OV_GUI_Controller;
 import lib.ctrl.gui.elements.Button;
 import lib.model.OV_Model;
@@ -31,7 +34,29 @@ public class GUI_Ctrl_Truppenansicht extends OV_GUI_Controller {
 
 	@Override
 	protected List<Button> loadButtons() {
-		return new ArrayList<Button>();
+
+		List<Button> buttons = new ArrayList<>();
+
+		// Add Kaempfer
+		Button gruendeStadt = new ES_BlackRectButton(10, 500, 250, 50);
+		gruendeStadt.setText("Stadt gründen");
+		gruendeStadt.setAktionLinks(new Aktion() {
+
+			@Override
+			public void run() {
+				if (t.getMaterial() >= 10) {
+					Stadt s = ((EasyStrategy) m).requestStadt("S", t.getPosX(), t.getPosY(), t.getSpielerID());
+					if (s != null) {
+						t.materialVerwenden(10);
+						((EasyStrategy) m).stationiereTruppeInStadt(s, t);
+					}
+				}
+
+			}
+		});
+		buttons.add(gruendeStadt);
+
+		return buttons;
 	}
 
 	@Override
@@ -40,9 +65,11 @@ public class GUI_Ctrl_Truppenansicht extends OV_GUI_Controller {
 	}
 
 	@Override
-	public void handleFreeMouseRelease(int mouseX, int mouseY, int button) {	}
+	public void handleFreeMouseRelease(int mouseX, int mouseY, int button) {
+	}
 
 	@Override
-	public void updateGUICtrl() {	}
+	public void updateGUICtrl() {
+	}
 
 }
