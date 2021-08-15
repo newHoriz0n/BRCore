@@ -14,6 +14,7 @@ import java.util.TimerTask;
 import configs.easyStrategy.game.Truppe;
 import lib.model.listener.EUpdateTopic;
 import lib.model.listener.UpdateListener;
+import lib.model.phx.Collision;
 import lib.view.Betrachter;
 import lib.view.Betrachter_FocusObject;
 import lib.view.OV_ViewContainer;
@@ -86,8 +87,12 @@ public class ObjektVerwaltung {
 
 	public void updateObjekte() {
 		for (String s : kreisKatalog.keySet()) {
-			for (KreisObjekt k : kreisKatalog.get(s)) {
-				k.updateKO();
+			for (int i = kreisKatalog.get(s).size() - 1; i >= 0; i--) {
+				if (!kreisKatalog.get(s).get(i).isAlive()) {
+					kreisKatalog.get(s).remove(i);
+				} else {
+					kreisKatalog.get(s).get(i).updateKO();
+				}
 			}
 		}
 	}
@@ -329,6 +334,34 @@ public class ObjektVerwaltung {
 
 	public void removeKreis(Truppe t, String gruppe) {
 		kreisKatalog.get(gruppe).remove(t);
+	}
+
+	public List<KreisObjekt> getKreisVonKategorie(String gruppenName) {
+		if (kreisKatalog.containsKey("Staedte")) {
+			return kreisKatalog.get(gruppenName);
+		} else {
+			return new ArrayList<>();
+		}
+	}
+
+	public List<Collision> checkRelevantCollision(int kreisGruppe1, int kreisGruppe2) {
+		List<Collision> cols = new ArrayList<>();
+		for (int i = 0; i < direktSichtbareKreise.size(); i++) {
+			if (direktSichtbareKreise.get(i).getGruppe() == kreisGruppe1) {
+				for (int j = i + 1; j < direktSichtbareKreise.size(); j++) {
+					if (direktSichtbareKreise.get(j).getGruppe() == kreisGruppe2) {
+						if (direktSichtbareKreise.get(i).getObjectID() != direktSichtbareKreise.get(j).getObjectID()) {
+							if (direktSichtbareKreise.get(i).calcDistanzZu(direktSichtbareKreise.get(j).getPosX(),
+									direktSichtbareKreise.get(j).getPosY()) < direktSichtbareKreise.get(i).getRadius()
+											+ direktSichtbareKreise.get(j).getRadius()) {
+								cols.add(new Collision(direktSichtbareKreise.get(i), direktSichtbareKreise.get(j)));
+							}
+						}
+					}
+				}
+			}
+		}
+		return cols;
 	}
 
 }

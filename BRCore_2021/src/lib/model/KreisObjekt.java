@@ -15,6 +15,8 @@ import lib.view.Betrachter;
 public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHandler {
 
 	private long objectID;
+	protected int gruppe;
+	private boolean alive;
 
 	protected int radius;
 	protected double posX;
@@ -28,8 +30,8 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 
 	private double sichtbarkeit = 0; // [0,1]
 
-	private double centerDistanz = 0;
-	private double randDistanz = 0;
+	private double centerBetrachterDistanz = 0;
+	private double randBetrachterDistanz = 0;
 
 	private int ohneBullsEyeAnzeigDistanz = 2000;
 
@@ -45,12 +47,17 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 		this.farbeRahmen = rahmenFarbe;
 		this.objectID = ObjectIDSingleton.getNextID();
 		this.lastUpdate = System.currentTimeMillis();
+		this.alive = true;
 	}
 
 	public void updateKO() {
 		long dt = System.currentTimeMillis() - lastUpdate;
 		lastUpdate = System.currentTimeMillis();
 		update(dt);
+	}
+
+	public void setGruppe(int gruppe) {
+		this.gruppe = gruppe;
 	}
 
 	protected abstract void update(long dt);
@@ -101,28 +108,28 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 
 		// TODO: Berücksichtige Bewegungsgeschwindigkeit in screenRadius
 
-		if (b != null) {
+		if (b != null && alive) {
 			if (posX > b.getX() - metereologischeSichtweite && posX < b.getX() + metereologischeSichtweite
 					&& posY > b.getY() - metereologischeSichtweite && posY < b.getY() + metereologischeSichtweite) {
 
-				calcDistanzZu(b.getX(), b.getY());
+				calcBetrachterDistanz(b.getX(), b.getY());
 
 				if (bullseyeSetting.equals(ObjectVerwaltungSettingValues.BULLSEYE_ON)) {
 
-					this.sichtbarkeit = 1 - ((randDistanz - screenRadius) / metereologischeSichtweite);
+					this.sichtbarkeit = 1 - ((randBetrachterDistanz - screenRadius) / metereologischeSichtweite);
 
 					if (sichtbarkeit > 0) {
 						if (calcSichtwinkelTan() > sichtAufloesung) {
-							if (randDistanz < screenRadius - 100) { // Nur im HauptScreen sichtbar
+							if (randBetrachterDistanz < screenRadius - 100) { // Nur im HauptScreen sichtbar
 								return 3;
-							} else if (randDistanz < screenRadius + 100) { // In Haupt und Entfernt sichtbar
+							} else if (randBetrachterDistanz < screenRadius + 100) { // In Haupt und Entfernt sichtbar
 								return 2;
 							}
 							return 1; // Nur entfernt sichtbar
 						}
 					}
 				} else {
-					if (randDistanz < ohneBullsEyeAnzeigDistanz) { // Nur im HauptScreen sichtbar
+					if (randBetrachterDistanz < ohneBullsEyeAnzeigDistanz) { // Nur im HauptScreen sichtbar
 						return 3;
 					}
 				}
@@ -136,28 +143,30 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 
 	public void draw(Graphics2D g, Betrachter b, double screenRadius, ObjectVerwaltungSettingValues bullseyeSetting) {
 
-		boolean draw = false;
-		if (bullseyeSetting.equals(ObjectVerwaltungSettingValues.BULLSEYE_ON)) {
-			if (randDistanz < screenRadius) {
-				draw = true;
+		if (alive) {
+			boolean draw = false;
+			if (bullseyeSetting.equals(ObjectVerwaltungSettingValues.BULLSEYE_ON)) {
+				if (randBetrachterDistanz < screenRadius) {
+					draw = true;
+				}
+			} else {
+				if (randBetrachterDistanz < ohneBullsEyeAnzeigDistanz) {
+					draw = true;
+				}
 			}
-		} else {
-			if (randDistanz < ohneBullsEyeAnzeigDistanz) {
-				draw = true;
+			if (draw) {
+				g.setColor(farbeHintergrund);
+				g.fillOval((int) (posX - radius), (int) (posY - radius), (int) (radius * 2), (int) (radius * 2));
+				if (bild != null) {
+					AffineTransform at = new AffineTransform();
+					at.translate(posX - radius, posY - radius);
+					at.rotate(ausrichtung, radius, radius);
+					at.scale(radius * 2 / (double) bild.getWidth(), radius * 2 / (double) bild.getHeight());
+					g.drawImage(bild, at, null);
+				}
+				g.setColor(farbeRahmen);
+				g.drawOval((int) (posX - radius), (int) (posY - radius), (int) (radius * 2), (int) (radius * 2));
 			}
-		}
-		if (draw) {
-			g.setColor(farbeHintergrund);
-			g.fillOval((int) (posX - radius), (int) (posY - radius), (int) (radius * 2), (int) (radius * 2));
-			if (bild != null) {
-				AffineTransform at = new AffineTransform();
-				at.translate(posX - radius, posY - radius);
-				at.rotate(ausrichtung, radius, radius);
-				at.scale(radius * 2 / (double) bild.getWidth(), radius * 2 / (double) bild.getHeight());
-				g.drawImage(bild, at, null);
-			}
-			g.setColor(farbeRahmen);
-			g.drawOval((int) (posX - radius), (int) (posY - radius), (int) (radius * 2), (int) (radius * 2));
 		}
 	}
 
@@ -166,22 +175,22 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 		double dy = posY - b.getY();
 		double r = calcErscheinungsGroesse(b, screenRadius);
 
-		if (centerDistanz > screenRadius - entferntleistenHoehe / 2) {
+		if (centerBetrachterDistanz > screenRadius - entferntleistenHoehe / 2) {
 
 			g.setColor(farbeHintergrund);
-			g.fillOval((int) (b.getX() + dx * (screenRadius - entferntleistenHoehe / 2) / centerDistanz - r),
-					(int) (b.getY() + dy * (screenRadius - entferntleistenHoehe / 2) / centerDistanz - r), (int) (r * 2), (int) (r * 2));
+			g.fillOval((int) (b.getX() + dx * (screenRadius - entferntleistenHoehe / 2) / centerBetrachterDistanz - r),
+					(int) (b.getY() + dy * (screenRadius - entferntleistenHoehe / 2) / centerBetrachterDistanz - r), (int) (r * 2), (int) (r * 2));
 
 			g.setColor(farbeRahmen);
-			g.drawOval((int) (b.getX() + dx * (screenRadius - entferntleistenHoehe / 2) / centerDistanz - r),
-					(int) (b.getY() + dy * (screenRadius - entferntleistenHoehe / 2) / centerDistanz - r), (int) (r * 2), (int) (r * 2));
+			g.drawOval((int) (b.getX() + dx * (screenRadius - entferntleistenHoehe / 2) / centerBetrachterDistanz - r),
+					(int) (b.getY() + dy * (screenRadius - entferntleistenHoehe / 2) / centerBetrachterDistanz - r), (int) (r * 2), (int) (r * 2));
 
 			double sFaktor = 1 - Math.max(0, Math.min(1, sichtbarkeit));
 
 			// Nebel
 			g.setColor(new Color(255, 255, 255, (int) (255 * sFaktor)));
-			g.fillOval((int) (b.getX() + dx * (screenRadius - entferntleistenHoehe / 2) / centerDistanz - r),
-					(int) (b.getY() + dy * (screenRadius - entferntleistenHoehe / 2) / centerDistanz - r), (int) (r * 2), (int) (r * 2));
+			g.fillOval((int) (b.getX() + dx * (screenRadius - entferntleistenHoehe / 2) / centerBetrachterDistanz - r),
+					(int) (b.getY() + dy * (screenRadius - entferntleistenHoehe / 2) / centerBetrachterDistanz - r), (int) (r * 2), (int) (r * 2));
 
 		}
 	}
@@ -193,24 +202,28 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 	 * @return Radius des Kreises erscheinend auf ScreenRadius
 	 */
 	public double calcErscheinungsGroesse(Betrachter b, double screenRadius) {
-		calcDistanzZu(b.getX(), b.getY());
-		return (double) radius / (double) (centerDistanz + radius) * screenRadius;
+		calcBetrachterDistanz(b.getX(), b.getY());
+		return (double) radius / (double) (centerBetrachterDistanz + radius) * screenRadius;
 	}
 
 	public double calcSichtwinkelTan() {
-		return (radius * 2) / randDistanz;
+		return (radius * 2) / randBetrachterDistanz;
 	}
 
-	public void calcDistanzZu(double x, double y) {
-		this.centerDistanz = Math.sqrt(Math.pow(x - posX, 2) + Math.pow(y - posY, 2));
-		this.randDistanz = Math.max(0, centerDistanz - radius);
+	public double calcDistanzZu(double x, double y) {
+		return Math.sqrt(Math.pow(x - posX, 2) + Math.pow(y - posY, 2));
+	}
+
+	public void calcBetrachterDistanz(double x, double y) {
+		this.centerBetrachterDistanz = Math.sqrt(Math.pow(x - posX, 2) + Math.pow(y - posY, 2));
+		this.randBetrachterDistanz = Math.max(0, centerBetrachterDistanz - radius);
 	}
 
 	@Override
 	public int compareTo(KreisObjekt o) {
-		if (randDistanz < o.randDistanz) {
+		if (randBetrachterDistanz < o.randBetrachterDistanz) {
 			return 1;
-		} else if (randDistanz > o.randDistanz) {
+		} else if (randBetrachterDistanz > o.randBetrachterDistanz) {
 			return -1;
 		} else {
 			return 0;
@@ -221,11 +234,23 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 		return ausrichtung;
 	}
 
+	public int getGruppe() {
+		return gruppe;
+	}
+
 	@Override
 	public void handleEvent(EEventTyp e) {
 		if (eventAktionen.containsKey(e)) {
 			eventAktionen.get(e).run();
 		}
+	}
+
+	public void die() {
+		this.alive = false;
+	}
+
+	public boolean isAlive() {
+		return alive;
 	}
 
 }

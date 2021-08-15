@@ -162,12 +162,15 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 			if (transform) {
 				g.translate(posX, posY);
 			}
-			drawGUIContent(g);
+			drawGUIBackground(g);
 
 			updateTempButtons();
 			for (Button b : buttons) {
 				b.draw(g);
 			}
+
+			drawGUIOverlay(g);
+			
 			if (transform) {
 				g.translate(-posX, -posY);
 			}
@@ -175,7 +178,10 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 		}
 	}
 
-	protected void drawGUIContent(Graphics2D g2d) {
+	protected void drawGUIBackground(Graphics2D g2d) {
+	}
+	
+	protected void drawGUIOverlay(Graphics2D g2d) {
 	}
 
 	public int getGruppe() {

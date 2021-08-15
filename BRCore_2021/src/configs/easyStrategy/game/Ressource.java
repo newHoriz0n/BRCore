@@ -12,7 +12,7 @@ import lib.model.KreisObjekt;
 public class Ressource extends KreisObjekt {
 
 	private RessourcenTyp typ;
-	private int anzahl;
+	private double anzahl;
 
 	public enum RessourcenTyp {
 		WASSER, WALD
@@ -40,9 +40,10 @@ public class Ressource extends KreisObjekt {
 	}
 
 	@Override
-	protected void update(long dt) {	}
+	protected void update(long dt) {
+	}
 
-	public void abbauen(int anzahl) {
+	public void abbauen(double anzahl) {
 		this.anzahl -= anzahl;
 	}
 
@@ -63,6 +64,10 @@ public class Ressource extends KreisObjekt {
 		default:
 			return Color.BLACK;
 		}
+	}
+
+	public double getAnzahl() {
+		return anzahl;
 	}
 
 }

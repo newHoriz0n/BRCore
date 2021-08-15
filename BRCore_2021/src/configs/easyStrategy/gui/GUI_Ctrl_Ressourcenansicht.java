@@ -21,7 +21,7 @@ public class GUI_Ctrl_Ressourcenansicht extends OV_GUI_Controller {
 	}
 
 	@Override
-	protected void drawGUIContent(Graphics2D g2d) {
+	protected void drawGUIBackground(Graphics2D g2d) {
 		g2d.setColor(Color.WHITE);
 		g2d.drawString(r.getTyp().toString(), 10, 30);
 	}

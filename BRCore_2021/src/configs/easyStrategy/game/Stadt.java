@@ -3,6 +3,7 @@ package configs.easyStrategy.game;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import configs.easyStrategy.gui.GUI_Ctrl_Stadtansicht;
 import lib.ctrl.EEventTyp;
@@ -16,11 +17,21 @@ public class Stadt extends KreisObjekt {
 	private String name;
 	private int spielerID;
 
-	private int arbeiter;
+	private double material;
+	private double arbeiter;
+	private int azubis; // Weder Arbeiter noch Kaempfer
 	private int kaempfer;
-	private int material;
+
+	private int deltaMaterial;
+	private int deltaArbeiter;
+	private int deltaKaempfer;
 
 	private List<Truppe> stationierteTruppen;
+
+	private Random r = new Random();
+
+	private long ausbildungsDauer = 10000;
+	private long lastAusbildungsStart;
 
 	public Stadt(String name, double posX, double posY, int spielerID, OV_Controller oc) {
 		super(posX, posY, 30, Color.LIGHT_GRAY, Spieler.getSpielerFarbe(spielerID));
@@ -44,7 +55,25 @@ public class Stadt extends KreisObjekt {
 	}
 
 	@Override
-	protected void update(long dt) {	}
+	protected void update(long dt) {
+
+		calcBevoelkerungswachstum(dt);
+		calcAusbildung();
+
+	}
+
+	private void calcAusbildung() {
+		if (azubis > 0) {
+			if (System.currentTimeMillis() - lastAusbildungsStart > ausbildungsDauer) {
+				ausbildungAbschliessen();
+			}
+		}
+	}
+
+	private void calcBevoelkerungswachstum(long dt) {
+		double neu = (arbeiter + azubis + kaempfer) * Math.pow(1.001, (double) dt * r.nextDouble() / 1000.0) - kaempfer - azubis;
+		arbeiter = neu;
+	}
 
 	public void setWerte(int arbeiter, int kaempfer, int material) {
 		this.arbeiter = arbeiter;
@@ -52,13 +81,30 @@ public class Stadt extends KreisObjekt {
 		this.material = material;
 	}
 
-	public void ausbilden(int anzahl) {
+	public void ausbildungStarten(int anzahl) {
 		if (anzahl > material || anzahl > arbeiter) {
 			throw new IllegalArgumentException();
 		}
 		arbeiter -= anzahl;
 		material -= anzahl;
-		kaempfer += anzahl;
+		azubis += anzahl;
+
+		lastAusbildungsStart = System.currentTimeMillis();
+	}
+
+	public void ausbildungAbschliessen() {
+		this.azubis -= 1;
+		this.kaempfer += 1;
+		lastAusbildungsStart = System.currentTimeMillis();
+
+	}
+
+	public double getAusbildungsFortschritt() {
+		if (azubis > 0) {
+			double wert = Math.max(0, Math.min(1, (double) (System.currentTimeMillis() - lastAusbildungsStart) / (double) ausbildungsDauer));
+			return wert;
+		}
+		return 0;
 	}
 
 	public void stationiereTruppe(Truppe t) {
@@ -84,6 +130,29 @@ public class Stadt extends KreisObjekt {
 
 	public int getSpielerID() {
 		return spielerID;
+	}
+
+	public double getArbeiter() {
+		return arbeiter;
+	}
+
+	public int getAzubis() {
+		return azubis;
+	}
+
+	public int getKaempfer() {
+		return kaempfer;
+	}
+
+	public double getMaterial() {
+		return material;
+	}
+
+	public double sammleRessource(Ressource r) {
+		double dist = r.calcDistanzZu(posX, posY);
+		double wert = Math.min(arbeiter / dist, r.getAnzahl());
+		material += wert;
+		return wert;
 	}
 
 }

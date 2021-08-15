@@ -29,4 +29,5 @@ public abstract class OV_Model {
 	
 	protected abstract void notifyControllerSet();
 
+
 }
