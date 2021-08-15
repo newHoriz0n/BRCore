@@ -25,7 +25,7 @@ public class ES_KI {
 
 	public void calcStrategieUpdate(EasyStrategy es, int spielerID) {
 		lastStrategieUpdate = System.currentTimeMillis();
-		List<KreisObjekt> staedte = es.getStaedte(spielerID);
+		List<KreisObjekt> staedte = es.getStaedteVonSpieler(spielerID);
 		for (KreisObjekt k : staedte) {
 			Stadt s = (Stadt) k;
 			if (s.getKaempfer() + s.getAzubis() < ausbildung_standard * s.getArbeiter()) {

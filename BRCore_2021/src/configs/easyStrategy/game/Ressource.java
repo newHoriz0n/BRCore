@@ -22,7 +22,7 @@ public class Ressource extends KreisObjekt {
 		super(posX, posY, 0, getColorVonTyp(typ), getColorVonTyp(typ));
 		this.typ = typ;
 		this.anzahl = anzahl;
-		calcRadius();
+		updateRadius();
 
 		Ressource me = this;
 
@@ -41,17 +41,22 @@ public class Ressource extends KreisObjekt {
 
 	@Override
 	protected void update(long dt) {
+		if (typ == RessourcenTyp.WALD) {
+			anzahl = anzahl * Math.pow(1.01, (double) dt / 1000.0);
+			updateRadius();
+		}
 	}
 
 	public void abbauen(double anzahl) {
 		this.anzahl -= anzahl;
+		updateRadius();
 	}
 
 	public RessourcenTyp getTyp() {
 		return typ;
 	}
 
-	public void calcRadius() {
+	public void updateRadius() {
 		radius = (int) (Math.sqrt(anzahl) + 5);
 	}
 

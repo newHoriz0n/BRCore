@@ -57,7 +57,7 @@ public class EasyStrategy extends OV_Model {
 			for (KreisObjekt os : ov.getKreisVonKategorie("Staedte")) {
 				Stadt s = (Stadt) os;
 				r.abbauen(s.sammleRessource(r));
-				//TODO: Rest fair verteilen
+				// TODO: Rest fair verteilen
 			}
 		}
 	}
@@ -72,11 +72,13 @@ public class EasyStrategy extends OV_Model {
 	}
 
 	private void calcKampf(Truppe k1, Truppe k2) {
-		int z = r.nextInt(2);
-		if (z == 0) {
-			k1.die();
-		} else {
-			k2.die();
+		if (k1.getSpielerID() != k2.getSpielerID()) {
+			int z = r.nextInt(2);
+			if (z == 0) {
+				k1.die();
+			} else {
+				k2.die();
+			}
 		}
 	}
 
@@ -104,7 +106,7 @@ public class EasyStrategy extends OV_Model {
 	}
 
 	private void loadTruppen() {
-		addTruppe(requestTruppe("Römer", 550, 0, 0));
+		addTruppe(requestTruppe("Römer", 550, 0, 0, null, 1000));
 	}
 
 	private void addTruppe(Truppe t) {
@@ -115,15 +117,22 @@ public class EasyStrategy extends OV_Model {
 		ov.removeKreis(t, "Truppen");
 	}
 
-	public Truppe requestTruppe(String name, double posX, double posY, int spielerID) {
-		Truppe t = new Truppe(name, posX, posY, spielerID, oc);
+	public Truppe requestTruppe(String name, double posX, double posY, int spielerID, Stadt stadt, int anzahl) {
+		Truppe t = new Truppe(name, posX, posY, spielerID, anzahl, oc);
 		t.setName("T" + t.getObjectID());
+		if (stadt != null) {
+			if (stadt.verwendeKaempfer(anzahl)) {
+				return t;
+			} else {
+				return null;
+			}
+		}
 		return t;
 	}
 
 	private void loadStaedte() {
-		addStadt("Feindstadt", 1100, 0, 0, 10, 10, 0);
-		addStadt("Hauptstadt", 100, 0, 1, 10, 10, 0);
+		addStadt("Feindstadt", 1100, 0, 0, 10, 10, 2);
+		addStadt("Hauptstadt", 100, 0, 1, 10, 10, 2);
 	}
 
 	private void addStadt(String name, double posX, double posY, int spielerID, int material, int arbeiter, int kaempfer) {
@@ -203,7 +212,7 @@ public class EasyStrategy extends OV_Model {
 
 	}
 
-	public List<KreisObjekt> getStaedte(int spielerID) {
+	public List<KreisObjekt> getStaedteVonSpieler(int spielerID) {
 		List<KreisObjekt> staedte = new ArrayList<>();
 		if (ov != null) {
 			for (KreisObjekt k : ov.getKreisVonKategorie("Staedte")) {

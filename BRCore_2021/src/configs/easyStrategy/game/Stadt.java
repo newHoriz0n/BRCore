@@ -22,9 +22,9 @@ public class Stadt extends KreisObjekt {
 	private int azubis; // Weder Arbeiter noch Kaempfer
 	private int kaempfer;
 
-	private int deltaMaterial;
-	private int deltaArbeiter;
-	private int deltaKaempfer;
+//	private int deltaMaterial;
+//	private int deltaArbeiter;
+//	private int deltaKaempfer;
 
 	private List<Truppe> stationierteTruppen;
 
@@ -81,15 +81,17 @@ public class Stadt extends KreisObjekt {
 		this.material = material;
 	}
 
-	public void ausbildungStarten(int anzahl) {
-		if (anzahl > material || anzahl > arbeiter) {
-			throw new IllegalArgumentException();
+	public boolean ausbildungStarten(int anzahl) {
+		if (anzahl < material && anzahl < arbeiter) {
+			if (azubis == 0) {
+				lastAusbildungsStart = System.currentTimeMillis();
+			}
+			arbeiter -= anzahl;
+			material -= anzahl;
+			azubis += anzahl;
+			return true;
 		}
-		arbeiter -= anzahl;
-		material -= anzahl;
-		azubis += anzahl;
-
-		lastAusbildungsStart = System.currentTimeMillis();
+		return false;
 	}
 
 	public void ausbildungAbschliessen() {
@@ -97,6 +99,14 @@ public class Stadt extends KreisObjekt {
 		this.kaempfer += 1;
 		lastAusbildungsStart = System.currentTimeMillis();
 
+	}
+
+	public void ausbildungAbbrechen(int anzahl) {
+		if (azubis > 0) {
+			arbeiter += anzahl;
+			material += anzahl;
+			azubis -= anzahl;
+		}
 	}
 
 	public double getAusbildungsFortschritt() {
@@ -112,8 +122,10 @@ public class Stadt extends KreisObjekt {
 	}
 
 	public void truppeAufloesen(Truppe t) {
+		kaempfer += t.getKaempfer();
+		arbeiter += t.getArbeiter();
+		material += t.getMaterial();
 		this.stationierteTruppen.remove(t);
-		// TODO: Truppeneinheiten in Stadt einquartieren.
 	}
 
 	public void truppeEntsenden(Truppe t) {
@@ -153,6 +165,42 @@ public class Stadt extends KreisObjekt {
 		double wert = Math.min(arbeiter / dist, r.getAnzahl());
 		material += wert;
 		return wert;
+	}
+
+	public boolean verwendeKaempfer(int anzahl) {
+		if (kaempfer >= anzahl) {
+			kaempfer -= anzahl;
+			return true;
+		}
+		return false;
+	}
+
+	public void addKaempfer(int anzahl) {
+		kaempfer += anzahl;
+	}
+
+	public boolean verwendeArbeiter(int anzahl) {
+		if (arbeiter >= anzahl) {
+			arbeiter -= anzahl;
+			return true;
+		}
+		return false;
+	}
+
+	public void addArbeiter(int anzahl) {
+		arbeiter += anzahl;
+	}
+
+	public boolean verwendeMaterial(int anzahl) {
+		if (material >= anzahl) {
+			material -= anzahl;
+			return true;
+		}
+		return false;
+	}
+
+	public void addMaterial(int anzahl) {
+		material += anzahl;
 	}
 
 }

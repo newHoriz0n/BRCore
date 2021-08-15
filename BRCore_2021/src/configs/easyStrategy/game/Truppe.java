@@ -15,16 +15,22 @@ public class Truppe extends KreisObjekt {
 
 	private String name;
 	private int spielerID;
+	private int kaempfer;
+
+	private int material;
+	private int arbeiter;
 
 	private Vektor3D ziel;
 
-	public Truppe(String name, double posX, double posY, int spielerID, OV_Controller oc) {
-		super(posX, posY, 10, Spieler.getSpielerFarbe(spielerID), Spieler.getSpielerFarbe(spielerID));
+	public Truppe(String name, double posX, double posY, int spielerID, int anzahl, OV_Controller oc) {
+		super(posX, posY, 0, Spieler.getSpielerFarbe(spielerID), Spieler.getSpielerFarbe(spielerID));
 		this.name = name;
 		this.spielerID = spielerID;
-
+		this.kaempfer = anzahl;
 		this.gruppe = getKreisGruppe();
-		
+
+		updateRadius();
+
 		Truppe me = this;
 
 		setEventAktion(EEventTyp.MAUSKLICK_LINKS, new Aktion() {
@@ -36,10 +42,15 @@ public class Truppe extends KreisObjekt {
 				sc.setHintergrundFarbe(Color.BLACK);
 				oc.addOverLayGC(sc);
 				((EasyStrategy) oc.getModel()).setFocusTruppe(me);
-				((EasyStrategy) oc.getModel()).setState(ES_State.TRUPPE_BEWEGEN);;
+				((EasyStrategy) oc.getModel()).setState(ES_State.TRUPPE_BEWEGEN);
+				;
 			}
 		});
 
+	}
+
+	private void updateRadius() {
+		this.radius = (int) (Math.sqrt(kaempfer * 10));
 	}
 
 	@Override
@@ -47,14 +58,57 @@ public class Truppe extends KreisObjekt {
 		// Essen
 		// Moral
 		// Bewegen
-		Vektor3D speed = calcSpeed();
-		posX += speed.getX() * dt / 1000.0;
-		posY += speed.getY() * dt / 1000.0;
+		if (ziel != null) {
+			Vektor3D speed = calcSpeed().scale(dt / 1000.0);
+			if (this.calcDistanzZu(ziel.getX(), ziel.getY()) < speed.calcAbsValue()) {
+				posX = ziel.getX();
+				posY = ziel.getY();
+				ziel = null;
+			} else {
+				posX += speed.getX();
+				posY += speed.getY();
+			}
+		}
+	}
+
+	public void addMaterial(int anzahl) {
+		this.material += anzahl;
+	}
+	
+	public boolean materialVerwenden(int anzahl) {
+		if (this.material >= anzahl) {
+			this.material -= anzahl;
+			return true;
+		}
+		return false;
+	}
+
+	public void addArbeiter(int anzahl) {
+		this.arbeiter += anzahl;
+	}
+	
+	public boolean arbeiterVerwenden(int anzahl) {
+		if (this.arbeiter >= anzahl) {
+			this.arbeiter -= anzahl;
+			return true;
+		}
+		return false;
+	}
+
+	public void addKaempfer(int anzahl) {
+		this.kaempfer += anzahl;
+	}
+
+	public boolean verkeinern(int anzahl) {
+		if (this.kaempfer >= anzahl) {
+			this.kaempfer -= anzahl;
+			return true;
+		}
+		return false;
 	}
 
 	private Vektor3D calcSpeed() {
 		if (ziel != null) {
-
 			Vektor3D dif = new Vektor3D(ziel);
 			dif.add(new Vektor3D(posX, posY, 0).scale(-1));
 			return new Vektor3D(dif.calcXYAngle(), 5);
@@ -78,9 +132,21 @@ public class Truppe extends KreisObjekt {
 	public void setName(String string) {
 		this.name = string;
 	}
-	
+
 	public static int getKreisGruppe() {
 		return 1;
+	}
+
+	public int getKaempfer() {
+		return kaempfer;
+	}
+
+	public int getArbeiter() {
+		return arbeiter;
+	}
+
+	public int getMaterial() {
+		return material;
 	}
 
 }

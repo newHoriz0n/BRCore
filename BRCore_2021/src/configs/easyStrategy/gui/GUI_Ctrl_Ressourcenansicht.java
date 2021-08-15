@@ -2,6 +2,7 @@ package configs.easyStrategy.gui;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,8 @@ public class GUI_Ctrl_Ressourcenansicht extends OV_GUI_Controller {
 	protected void drawGUIBackground(Graphics2D g2d) {
 		g2d.setColor(Color.WHITE);
 		g2d.drawString(r.getTyp().toString(), 10, 30);
+		DecimalFormat df = new DecimalFormat("###.##");
+		g2d.drawString("" + df.format(r.getAnzahl()), 10, 60);
 	}
 
 	@Override
@@ -37,9 +40,11 @@ public class GUI_Ctrl_Ressourcenansicht extends OV_GUI_Controller {
 	}
 
 	@Override
-	public void handleFreeMouseRelease(int mouseX, int mouseY, int button) {	}
+	public void handleFreeMouseRelease(int mouseX, int mouseY, int button) {
+	}
 
 	@Override
-	public void updateGUICtrl() {	}
+	public void updateGUICtrl() {
+	}
 
 }
