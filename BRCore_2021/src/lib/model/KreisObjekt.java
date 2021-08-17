@@ -245,12 +245,46 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 		}
 	}
 
-	public void die() {
+	public KreisObjekt die() {
 		this.alive = false;
+		return this;
 	}
 
 	public boolean isAlive() {
 		return alive;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (objectID ^ (objectID >>> 32));
+		long temp;
+		temp = Double.doubleToLongBits(posX);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(posY);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		KreisObjekt other = (KreisObjekt) obj;
+		if (objectID != other.objectID)
+			return false;
+		if (Double.doubleToLongBits(posX) != Double.doubleToLongBits(other.posX))
+			return false;
+		if (Double.doubleToLongBits(posY) != Double.doubleToLongBits(other.posY))
+			return false;
+		return true;
+	}
+	
+	
 
 }

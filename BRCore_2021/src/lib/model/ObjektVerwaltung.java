@@ -337,7 +337,7 @@ public class ObjektVerwaltung {
 	}
 
 	public List<KreisObjekt> getKreisVonKategorie(String gruppenName) {
-		if (kreisKatalog.containsKey("Staedte")) {
+		if (kreisKatalog.containsKey(gruppenName)) {
 			return kreisKatalog.get(gruppenName);
 		} else {
 			return new ArrayList<>();
@@ -346,15 +346,17 @@ public class ObjektVerwaltung {
 
 	public List<Collision> checkRelevantCollision(int kreisGruppe1, int kreisGruppe2) {
 		List<Collision> cols = new ArrayList<>();
-		for (int i = 0; i < direktSichtbareKreise.size(); i++) {
-			if (direktSichtbareKreise.get(i).getGruppe() == kreisGruppe1) {
-				for (int j = i + 1; j < direktSichtbareKreise.size(); j++) {
-					if (direktSichtbareKreise.get(j).getGruppe() == kreisGruppe2) {
-						if (direktSichtbareKreise.get(i).getObjectID() != direktSichtbareKreise.get(j).getObjectID()) {
-							if (direktSichtbareKreise.get(i).calcDistanzZu(direktSichtbareKreise.get(j).getPosX(),
-									direktSichtbareKreise.get(j).getPosY()) < direktSichtbareKreise.get(i).getRadius()
-											+ direktSichtbareKreise.get(j).getRadius()) {
-								cols.add(new Collision(direktSichtbareKreise.get(i), direktSichtbareKreise.get(j)));
+		synchronized (realLock) {
+			for (int i = 0; i < direktSichtbareKreise.size(); i++) {
+				if (direktSichtbareKreise.get(i).getGruppe() == kreisGruppe1) {
+					for (int j = i + 1; j < direktSichtbareKreise.size(); j++) {
+						if (direktSichtbareKreise.get(j).getGruppe() == kreisGruppe2) {
+							if (direktSichtbareKreise.get(i).getObjectID() != direktSichtbareKreise.get(j).getObjectID()) {
+								if (direktSichtbareKreise.get(i).calcDistanzZu(direktSichtbareKreise.get(j).getPosX(),
+										direktSichtbareKreise.get(j).getPosY()) < direktSichtbareKreise.get(i).getRadius()
+												+ direktSichtbareKreise.get(j).getRadius()) {
+									cols.add(new Collision(direktSichtbareKreise.get(i), direktSichtbareKreise.get(j)));
+								}
 							}
 						}
 					}

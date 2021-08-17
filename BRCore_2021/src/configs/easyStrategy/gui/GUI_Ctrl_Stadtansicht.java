@@ -7,8 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import configs.easyStrategy.game.EasyStrategy;
-import configs.easyStrategy.game.Stadt;
 import configs.easyStrategy.game.Truppe;
+import configs.easyStrategy.game.EasyStrategy.ES_State;
+import configs.easyStrategy.game.stadt.Stadt;
 import lib.ctrl.OV_Controller;
 import lib.ctrl.gui.Aktion;
 import lib.ctrl.gui.OV_GUI_Controller;
@@ -19,12 +20,12 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 
 	private Stadt s;
 
-	private int offYtruppenButtons = 270;
+	private int offYtruppenButtons = 370;
+	private int offYGebaudeButtons = 160;
 	private List<Button> truppenButtons = new ArrayList<>();
 
 	public GUI_Ctrl_Stadtansicht(OV_Controller oc, Stadt s, OV_Model m) {
-		super(1, "Stadtansicht", oc.getViewer().getWidth() - 300, 0, 300,
-				oc.getViewer().getHeight(), m);
+		super(1, "Stadtansicht", oc.getViewer().getWidth() - 300, 0, 300, oc.getViewer().getHeight(), m);
 		this.s = s;
 
 		updateTruppenButtons();
@@ -50,10 +51,16 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 		g2d.drawString("" + s.getKaempfer(), 40, 135);
 		g2d.drawString("K", 15, 135);
 
+		// Gebäude
+		g2d.setColor(Color.WHITE);
+		g2d.drawLine(0, offYGebaudeButtons, width, offYGebaudeButtons);
+		g2d.drawLine(0, offYGebaudeButtons + 2, width, offYGebaudeButtons + 2);
+		g2d.drawString("Gebäude:", 10, offYGebaudeButtons + 28);
+
 		// Truppen
 		g2d.setColor(Color.WHITE);
-		g2d.drawLine(0, 180, width, 180);
-		g2d.drawLine(0, 182, width, 182);
+		g2d.drawLine(0, offYtruppenButtons - 30, width, offYtruppenButtons - 30);
+		g2d.drawLine(0, offYtruppenButtons - 28, width, offYtruppenButtons - 28);
 		int offY = offYtruppenButtons;
 		g2d.drawString("Truppen:", 10, offY);
 		for (Truppe t : s.getStationierteTruppen()) {
@@ -77,6 +84,7 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 		g2d.fillRect(122, 92, 7, (int) (46 * s.getAusbildungsFortschritt()));
 		g2d.setColor(Color.WHITE);
 		g2d.drawString("(+" + s.getAzubis() + ")", 65, 135);
+
 	}
 
 	@Override
@@ -105,20 +113,17 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 		});
 		buttons.add(redAzubis);
 
-		// Add Truppen
-		Button addTruppe = new ES_BlackRectButton(10, 200, 30, 30);
-		addTruppe.setAktionLinks(new Aktion() {
+		// Add Ressourcenabbau
+		Button addRessourcenAbbau = new ES_BlackRectButton(100, 60, 30, 20);
+		addRessourcenAbbau.setText("...");
+		addRessourcenAbbau.setAktionLinks(new Aktion() {
 
 			@Override
 			public void run() {
-				if (s.getKaempfer() >= 1) {
-					s.stationiereTruppe(((EasyStrategy) m).requestTruppe("", s.getPosX(), s.getPosY(), s.getSpielerID(), s, 1));
-					updateTruppenButtons();
-				}
+				((EasyStrategy) m).setState(ES_State.STADT_ABBAUEN);
 			}
-
 		});
-		buttons.add(addTruppe);
+		buttons.add(addRessourcenAbbau);
 
 		return buttons;
 	}
@@ -188,7 +193,7 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 				}
 			});
 			truppenButtons.add(truppAufl);
-			
+
 			// Truppe mehr Arbeiter
 			Button truppArbeiterMehr = new ES_BlackRectButton(220, offY + 30, 20, 20);
 			truppArbeiterMehr.setText("+");
@@ -196,13 +201,13 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 
 				@Override
 				public void run() {
-					if(s.verwendeArbeiter(1)) {
+					if (s.verwendeArbeiter(1)) {
 						t.addArbeiter(1);
 					}
 				}
 			});
 			truppenButtons.add(truppArbeiterMehr);
-			
+
 			// Truppe weniger Arbeiter
 			Button truppArbeiterWeniger = new ES_BlackRectButton(250, offY + 30, 20, 20);
 			truppArbeiterWeniger.setText("-");
@@ -210,13 +215,13 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 
 				@Override
 				public void run() {
-					if(t.arbeiterVerwenden(1)) {
+					if (t.arbeiterVerwenden(1)) {
 						s.addArbeiter(1);
 					}
 				}
 			});
 			truppenButtons.add(truppArbeiterWeniger);
-			
+
 			// Truppe mehr Material
 			Button truppMaterialMehr = new ES_BlackRectButton(220, offY + 60, 20, 20);
 			truppMaterialMehr.setText("+");
@@ -224,13 +229,13 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 
 				@Override
 				public void run() {
-					if(s.verwendeMaterial(1)) {
+					if (s.verwendeMaterial(1)) {
 						t.addMaterial(1);
 					}
 				}
 			});
 			truppenButtons.add(truppMaterialMehr);
-			
+
 			// Truppe weniger Material
 			Button truppMaterialWeniger = new ES_BlackRectButton(250, offY + 60, 20, 20);
 			truppMaterialWeniger.setText("-");
@@ -238,7 +243,7 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 
 				@Override
 				public void run() {
-					if(t.materialVerwenden(1)) {
+					if (t.materialVerwenden(1)) {
 						s.addMaterial(1);
 					}
 				}
@@ -247,6 +252,23 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 
 			offY += 60;
 		}
+		
+		// Add Truppen
+		Button addTruppe = new ES_BlackRectButton(10, offY + 30, 30, 30);
+		addTruppe.setText("+");
+		addTruppe.setAktionLinks(new Aktion() {
+
+			@Override
+			public void run() {
+				if (s.getKaempfer() >= 1) {
+					s.stationiereTruppe(((EasyStrategy) m).requestTruppe("", s.getPosX(), s.getPosY(), s.getSpielerID(), s, 1, 0, 0));
+					updateTruppenButtons();
+				}
+			}
+
+		});
+		truppenButtons.add(addTruppe);
+		
 		addButtons(truppenButtons);
 	}
 

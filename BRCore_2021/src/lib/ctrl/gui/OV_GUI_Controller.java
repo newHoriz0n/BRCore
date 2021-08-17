@@ -46,7 +46,8 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 	}
 
 	/**
-	 * Methode zur definition von Aktionen, die bei Aktualisierung der GUI ausgeführt werden sollen.
+	 * Methode zur definition von Aktionen, die bei Aktualisierung der GUI
+	 * ausgeführt werden sollen.
 	 */
 	public abstract void updateGUICtrl();
 
@@ -237,19 +238,27 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 	}
 
 	public void addButton(Button b) {
-		this.tempButtons.add(b);
+		synchronized (ButtonLock) {
+			this.tempButtons.add(b);
+		}
 	}
 
 	public void removeButton(Button b) {
-		this.tempButtons.remove(b);
+		synchronized (ButtonLock) {
+			this.tempButtons.remove(b);
+		}
 	}
 
 	public void removeButtons(List<Button> removeList) {
-		tempButtons.removeAll(removeList);
+		synchronized (ButtonLock) {
+			tempButtons.removeAll(removeList);
+		}
 	}
 
 	public void addButtons(List<Button> addList) {
-		tempButtons.addAll(addList);
+		synchronized (ButtonLock) {
+			tempButtons.addAll(addList);
+		}
 
 	}
 

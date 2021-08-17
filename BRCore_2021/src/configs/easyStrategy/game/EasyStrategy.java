@@ -2,15 +2,17 @@ package configs.easyStrategy.game;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import configs.easyStrategy.game.Ressource.RessourcenTyp;
+import configs.easyStrategy.game.kampf.Kampf;
 import configs.easyStrategy.game.ki.ES_KI;
+import configs.easyStrategy.game.stadt.Stadt;
 import configs.easyStrategy.gui.GUI_Ctrl_Stadtansicht;
-import configs.easyStrategy.gui.GUI_Ctrl_Truppenansicht;
 import lib.ctrl.gui.OV_GUI_Controller;
 import lib.math.Vektor3D;
 import lib.model.KreisObjekt;
@@ -25,7 +27,7 @@ public class EasyStrategy extends OV_Model {
 	private Random r = new Random();
 
 	public enum ES_State {
-		STANDARD, TRUPPE_AUSSENDEN, TRUPPE_BEWEGEN
+		STANDARD, TRUPPE_AUSSENDEN, TRUPPE_STEUERN, STADT_ABBAUEN
 	};
 
 	private ES_State state = ES_State.STANDARD;
@@ -40,29 +42,16 @@ public class EasyStrategy extends OV_Model {
 
 	public EasyStrategy(int spielerZahl) {
 		this.spielerZahl = spielerZahl;
-		this.ki = new ES_KI();
 		ES_UpdateThread est = new ES_UpdateThread();
 		est.start();
-
 	}
 
 	public void updateES() {
 		ov.updateObjekte();
 		checkKampf();
 
-		calcRessourcenVerteilung();
-
-		ki.calc(this, 0);
-	}
-
-	private void calcRessourcenVerteilung() {
-		for (KreisObjekt o : ov.getKreisVonKategorie("Ressourcen")) {
-			Ressource r = (Ressource) o;
-			for (KreisObjekt os : ov.getKreisVonKategorie("Staedte")) {
-				Stadt s = (Stadt) os;
-				r.abbauen(s.sammleRessource(r));
-				// TODO: Rest fair verteilen
-			}
+		if (ki != null) {
+			ki.calc();
 		}
 	}
 
@@ -70,28 +59,27 @@ public class EasyStrategy extends OV_Model {
 		List<Collision> cols = ov.checkRelevantCollision(Truppe.getKreisGruppe(), Truppe.getKreisGruppe());
 
 		for (Collision c : cols) {
-			calcKampf((Truppe) c.getK1(), (Truppe) c.getK2());
-		}
-
-	}
-
-	private void calcKampf(Truppe k1, Truppe k2) {
-		if (k1.getSpielerID() != k2.getSpielerID()) {
-			int z = r.nextInt(2);
-			if (z == 0) {
-				k1.die();
-			} else {
-				k2.die();
+			Kampf.calcKampf((Truppe) c.getK1(), (Truppe) c.getK2());
+			// Check besiegt
+			if (((Truppe) c.getK1()).getKaempfer() <= 0) {
+				((Truppe) c.getK2()).erobereTruppe((Truppe) ((Truppe) c.getK1()).die());
+			}
+			if (((Truppe) c.getK2()).getKaempfer() <= 0) {
+				((Truppe) c.getK1()).erobereTruppe((Truppe) ((Truppe) c.getK2()).die());
 			}
 		}
+
 	}
 
 	private void delayedLoadObjects() {
 		if (oc != null) {
+			loadRessourcen();
 			loadSpieler();
 			loadStaedte();
 			loadTruppen();
-			loadRessourcen();
+
+			this.ki = new ES_KI(this, 0);
+
 		}
 	}
 
@@ -102,6 +90,7 @@ public class EasyStrategy extends OV_Model {
 
 	private void loadRessourcen() {
 		addRessource(RessourcenTyp.WALD, 150, 300, 400);
+		addRessource(RessourcenTyp.WALD, 1150, 300, 400);
 	}
 
 	private void addRessource(RessourcenTyp typ, int posX, int posY, int anzahl) {
@@ -109,8 +98,34 @@ public class EasyStrategy extends OV_Model {
 		ov.addKreis(r, "Ressourcen");
 	}
 
+	public void calcBesteRessourcenFuerStadt(Stadt s) {
+
+		// Ressourcenabbau
+		List<KreisObjekt> ressourcen = getRessourcenQuellen();
+		if (ressourcen != null) {
+			HashMap<RessourcenTyp, Ressource> beste = new HashMap<>();
+			for (KreisObjekt o : ressourcen) {
+				Ressource r = (Ressource) o;
+				if (beste.containsKey(r.getTyp())) {
+					double dNeu = r.calcDistanzZu(s.getPosX(), s.getPosY());
+					double dBeste = beste.get(r.getTyp()).calcDistanzZu(s.getPosX(), s.getPosY());
+					if (dNeu < dBeste) {
+						beste.replace(r.getTyp(), r);
+					}
+				} else {
+					beste.put(r.getTyp(), r);
+				}
+			}
+			for (RessourcenTyp t : beste.keySet()) {
+				setRessourcenAbbau(beste.get(t), s);
+			}
+		}
+
+	}
+
 	private void loadTruppen() {
-		addTruppe(requestTruppe("Römer", 550, 0, 0, null, 1000));
+		addTruppe(requestTruppe("Römer", 750, 0, 0, null, 1000, 10, 5));
+		addTruppe(requestTruppe("Römer", 450, 0, 1, null, 100, 10, 5));
 	}
 
 	private void addTruppe(Truppe t) {
@@ -121,11 +136,13 @@ public class EasyStrategy extends OV_Model {
 		ov.removeKreis(t, "Truppen");
 	}
 
-	public Truppe requestTruppe(String name, double posX, double posY, int spielerID, Stadt stadt, int anzahl) {
-		Truppe t = new Truppe(name, posX, posY, spielerID, anzahl, oc);
+	public Truppe requestTruppe(String name, double posX, double posY, int spielerID, Stadt stadt, int kaempfer, int arbeiter, int material) {
+		Truppe t = new Truppe(name, posX, posY, spielerID, kaempfer, oc);
 		t.setName("T" + t.getObjectID());
+		t.addArbeiter(arbeiter);
+		t.addMaterial(material);
 		if (stadt != null) {
-			if (stadt.verwendeKaempfer(anzahl)) {
+			if (stadt.verwendeKaempfer(kaempfer)) {
 				return t;
 			} else {
 				return null;
@@ -137,6 +154,17 @@ public class EasyStrategy extends OV_Model {
 	private void loadStaedte() {
 		addStadt("Feindstadt", 1100, 0, 0, 10, 10, 2);
 		addStadt("Hauptstadt", 100, 0, 1, 10, 10, 2);
+
+		calcStartRessourcen();
+	}
+
+	private void calcStartRessourcen() {
+		List<KreisObjekt> staedte = ov.getKreisVonKategorie("Staedte");
+		for (KreisObjekt k : staedte) {
+			Stadt s = (Stadt) k;
+
+			calcBesteRessourcenFuerStadt(s);
+		}
 	}
 
 	public Stadt requestStadt(String name, double posX, double posY, int spielerID) {
@@ -195,10 +223,20 @@ public class EasyStrategy extends OV_Model {
 
 	public void setFocusTruppe(Truppe t) {
 		this.focusTruppe = t;
+		this.focusStadt = null;
 	}
 
 	public Truppe getFocusTruppe() {
 		return focusTruppe;
+	}
+
+	public Stadt getFocusStadt() {
+		return focusStadt;
+	}
+
+	public void setFocusStadt(Stadt s) {
+		focusStadt = s;
+		focusTruppe = null;
 	}
 
 	public void setState(ES_State status) {
@@ -247,6 +285,31 @@ public class EasyStrategy extends OV_Model {
 		oc.addOverLayGC(sc);
 		focusTruppe = null;
 		focusStadt = s;
+	}
+
+	public void setRessourcenAbbau(Ressource r, Stadt s) {
+		if (s != null && r != null) {
+			s.addRessourcenAbbau(r);
+		}
+	}
+
+	public void removeRessourcenAbbau(Ressource r, Stadt s) {
+		if (s != null) {
+			s.removeRessourcenAbbau(r);
+		}
+	}
+
+	public void toggleRessourcenAbbau(Ressource r, Stadt s) {
+		if (s != null) {
+			s.toggleRessourcenAbbau(r);
+		}
+	}
+
+	public List<KreisObjekt> getRessourcenQuellen() {
+		if (ov != null) {
+			return ov.getKreisVonKategorie("Ressourcen");
+		}
+		return null;
 	}
 
 }

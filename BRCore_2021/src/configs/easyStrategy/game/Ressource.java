@@ -2,6 +2,7 @@ package configs.easyStrategy.game;
 
 import java.awt.Color;
 
+import configs.easyStrategy.game.EasyStrategy.ES_State;
 import configs.easyStrategy.gui.GUI_Ctrl_Ressourcenansicht;
 import lib.ctrl.EEventTyp;
 import lib.ctrl.OV_Controller;
@@ -26,6 +27,7 @@ public class Ressource extends KreisObjekt {
 
 		Ressource me = this;
 
+		// Öffne Ressourcenansicht
 		setEventAktion(EEventTyp.MAUSKLICK_LINKS, new Aktion() {
 
 			@Override
@@ -34,6 +36,19 @@ public class Ressource extends KreisObjekt {
 						oc.getViewer().getHeight(), me, oc.getModel());
 				sc.setHintergrundFarbe(Color.BLACK);
 				oc.addOverLayGC(sc);
+				((EasyStrategy) oc.getModel()).setState(ES_State.STANDARD);
+			}
+		});
+
+		// Setze Abbau
+		setEventAktion(EEventTyp.MAUSKLICK_RECHTS, new Aktion() {
+
+			@Override
+			public void run() {
+				if (((EasyStrategy) oc.getModel()).getState() == ES_State.STADT_ABBAUEN) {
+					((EasyStrategy) oc.getModel()).toggleRessourcenAbbau(me, ((EasyStrategy) oc.getModel()).getFocusStadt());
+					((EasyStrategy) oc.getModel()).setState(ES_State.STANDARD);
+				}
 			}
 		});
 
@@ -42,7 +57,7 @@ public class Ressource extends KreisObjekt {
 	@Override
 	protected void update(long dt) {
 		if (typ == RessourcenTyp.WALD) {
-			anzahl = anzahl * Math.pow(1.01, (double) dt / 1000.0);
+			anzahl = anzahl * Math.pow(1.00001, (double) dt / 1000.0);
 			updateRadius();
 		}
 	}

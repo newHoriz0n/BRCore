@@ -1,8 +1,11 @@
 package configs.easyStrategy.game;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 import configs.easyStrategy.game.EasyStrategy.ES_State;
+import configs.easyStrategy.game.kampf.Einheit;
 import configs.easyStrategy.gui.GUI_Ctrl_Truppenansicht;
 import lib.ctrl.EEventTyp;
 import lib.ctrl.OV_Controller;
@@ -42,7 +45,7 @@ public class Truppe extends KreisObjekt {
 				sc.setHintergrundFarbe(Color.BLACK);
 				oc.addOverLayGC(sc);
 				((EasyStrategy) oc.getModel()).setFocusTruppe(me);
-				((EasyStrategy) oc.getModel()).setState(ES_State.TRUPPE_BEWEGEN);
+				((EasyStrategy) oc.getModel()).setState(ES_State.TRUPPE_STEUERN);
 				;
 			}
 		});
@@ -101,11 +104,13 @@ public class Truppe extends KreisObjekt {
 
 	public void addKaempfer(int anzahl) {
 		this.kaempfer += anzahl;
+		updateRadius();
 	}
 
 	public boolean verkeinern(int anzahl) {
 		if (this.kaempfer >= anzahl) {
 			this.kaempfer -= anzahl;
+			updateRadius();
 			return true;
 		}
 		return false;
@@ -151,6 +156,32 @@ public class Truppe extends KreisObjekt {
 
 	public int getMaterial() {
 		return material;
+	}
+
+	public List<Einheit> getEinheiten() {
+		List<Einheit> es = new ArrayList<>();
+		for (int i = 0; i < kaempfer; i++) {
+			es.add(new Einheit(3));
+		}
+		return es;
+	}
+
+	public void setEinheiten(List<Einheit> einheiten) {
+		kaempfer = einheiten.size();
+		updateRadius();
+	}
+
+	public static int getKampfOberflaeche(List<Einheit> einheiten) {
+		int flaeche = 0;
+		for (Einheit e : einheiten) {
+			flaeche += e.getGroesse();
+		}
+		return flaeche;
+	}
+
+	public void erobereTruppe(Truppe t) {
+		this.arbeiter += t.getArbeiter();
+		this.material += t.getMaterial();
 	}
 
 }

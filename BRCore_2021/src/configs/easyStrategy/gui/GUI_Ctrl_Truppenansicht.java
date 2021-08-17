@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import configs.easyStrategy.game.EasyStrategy;
-import configs.easyStrategy.game.Stadt;
 import configs.easyStrategy.game.Truppe;
+import configs.easyStrategy.game.stadt.Stadt;
 import lib.ctrl.gui.Aktion;
 import lib.ctrl.gui.OV_GUI_Controller;
 import lib.ctrl.gui.elements.Button;
@@ -29,7 +29,9 @@ public class GUI_Ctrl_Truppenansicht extends OV_GUI_Controller {
 		g2d.setColor(Color.WHITE);
 		g2d.drawString(t.getName(), 10, 30);
 		DecimalFormat df = new DecimalFormat("###.##");
-		g2d.drawString("" + df.format(t.getKaempfer()), 10, 60);
+		g2d.drawString("K: " + df.format(t.getKaempfer()), 10, 60);
+		g2d.drawString("A: " + df.format(t.getArbeiter()), 10, 90);
+		g2d.drawString("M: " + df.format(t.getMaterial()), 10, 120);
 	}
 
 	@Override
