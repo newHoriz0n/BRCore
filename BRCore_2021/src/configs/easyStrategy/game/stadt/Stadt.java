@@ -274,4 +274,8 @@ public class Stadt extends KreisObjekt {
 		material += anzahl;
 	}
 
+	public HashMap<Gebaeude.Typ, Integer> getGebaeudeLevel() {
+		return level;
+	}
+	
 }

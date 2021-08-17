@@ -9,6 +9,7 @@ import java.util.List;
 import configs.easyStrategy.game.EasyStrategy;
 import configs.easyStrategy.game.Truppe;
 import configs.easyStrategy.game.EasyStrategy.ES_State;
+import configs.easyStrategy.game.stadt.Gebaeude;
 import configs.easyStrategy.game.stadt.Stadt;
 import lib.ctrl.OV_Controller;
 import lib.ctrl.gui.Aktion;
@@ -20,14 +21,16 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 
 	private Stadt s;
 
-	private int offYtruppenButtons = 370;
-	private int offYGebaudeButtons = 160;
+	private int offYtruppenButtons = 380;
 	private List<Button> truppenButtons = new ArrayList<>();
+	private int offYGebaudeButtons = 160;
+	private List<Button> gebaeudeButtons = new ArrayList<>();
 
 	public GUI_Ctrl_Stadtansicht(OV_Controller oc, Stadt s, OV_Model m) {
 		super(1, "Stadtansicht", oc.getViewer().getWidth() - 300, 0, 300, oc.getViewer().getHeight(), m);
 		this.s = s;
 
+		updateGebaeudeButton();
 		updateTruppenButtons();
 	}
 
@@ -126,6 +129,32 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 		buttons.add(addRessourcenAbbau);
 
 		return buttons;
+	}
+
+	private void updateGebaeudeButton() {
+		removeButtons(gebaeudeButtons);
+		gebaeudeButtons.clear();
+
+		// Gebäude
+		int posX = 0;
+		int posY = 200;
+		for (Gebaeude.Typ typ : s.getGebaeudeLevel().keySet()) {
+
+			for (int i = 0; i < 3; i++) {
+				Button gebButton = new ES_BlackRectButton(10 + posX * 70, posY, 60, 60);
+				gebButton.setText(typ.toString().substring(0, 3));
+				gebaeudeButtons.add(gebButton);
+
+				posX++;
+				if (posX >= 4) {
+					posX = 0;
+					posY += 70;
+				}
+			}
+		}
+
+		addButtons(gebaeudeButtons);
+
 	}
 
 	private void updateTruppenButtons() {
@@ -252,7 +281,7 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 
 			offY += 60;
 		}
-		
+
 		// Add Truppen
 		Button addTruppe = new ES_BlackRectButton(10, offY + 30, 30, 30);
 		addTruppe.setText("+");
@@ -268,7 +297,7 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 
 		});
 		truppenButtons.add(addTruppe);
-		
+
 		addButtons(truppenButtons);
 	}
 
