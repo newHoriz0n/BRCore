@@ -114,4 +114,8 @@ public abstract class Button {
 
 	public abstract void draw(Graphics2D g);
 
+	public abstract int getPosX();
+	
+	public abstract int getPosY();
+
 }

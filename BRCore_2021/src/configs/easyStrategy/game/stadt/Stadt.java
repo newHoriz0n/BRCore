@@ -11,6 +11,7 @@ import configs.easyStrategy.game.Ressource;
 import configs.easyStrategy.game.RessourcenAbbau;
 import configs.easyStrategy.game.Spieler;
 import configs.easyStrategy.game.Truppe;
+import configs.easyStrategy.game.stadt.Gebaeude.Typ;
 import configs.easyStrategy.gui.GUI_Ctrl_Stadtansicht;
 import lib.ctrl.EEventTyp;
 import lib.ctrl.OV_Controller;
@@ -20,6 +21,8 @@ import lib.model.KreisObjekt;
 
 public class Stadt extends KreisObjekt {
 
+	private OV_Controller oc;
+	
 	private String name;
 	private int spielerID;
 
@@ -41,18 +44,29 @@ public class Stadt extends KreisObjekt {
 
 	private Random r = new Random();
 
+	// Ausbildung
 	private long ausbildungsDauer = 10000;
 	private long lastAusbildungsStart;
 
+	// Bau
+	private boolean inBau;
+	private Gebaeude.Typ bauTyp;
+	private long bauStart;
+	private double zielBauAufwand;
+	private double doneBauAufwand;
+	private long lastBauBerechnung;
+
 	public Stadt(String name, double posX, double posY, int spielerID, OV_Controller oc) {
 		super(posX, posY, 30, Color.LIGHT_GRAY, Spieler.getSpielerFarbe(spielerID));
+		this.oc = oc;
 		this.name = name;
 		this.spielerID = spielerID;
 		this.stationierteTruppen = new ArrayList<Truppe>();
 
 		initGebaeude();
-		
+
 		this.lastRessourcenAbbau = System.currentTimeMillis();
+		this.lastBauBerechnung = System.currentTimeMillis();
 
 		Stadt me = this;
 
@@ -77,10 +91,25 @@ public class Stadt extends KreisObjekt {
 	@Override
 	protected void update(long dt) {
 
-		calcRessourcenAbbau();
+		if (!inBau) {
+			calcRessourcenAbbau();
+		}else {
+			calcGebaeudeBau();
+		}
 		calcBevoelkerungswachstum(dt);
 		calcAusbildung();
 
+	}
+
+	private void calcGebaeudeBau() {
+		doneBauAufwand += arbeiter * (double)(System.currentTimeMillis() - lastBauBerechnung) / 1000.0;
+		lastBauBerechnung = System.currentTimeMillis();
+		if(doneBauAufwand >= zielBauAufwand) {
+			level.replace(bauTyp, level.get(bauTyp) + 1);
+			inBau = false;
+			lastRessourcenAbbau = System.currentTimeMillis();
+			oc.updateGUIs();
+		}
 	}
 
 	public void setGebaeudeStufen(Gebaeude.Typ typ, int stufe) {
@@ -277,5 +306,29 @@ public class Stadt extends KreisObjekt {
 	public HashMap<Gebaeude.Typ, Integer> getGebaeudeLevel() {
 		return level;
 	}
+
+	public boolean upgradeGebaeude(Typ typ) {
+		if (!inBau) {
+			if (Gebaeude.checkKosten(typ, this)) {
+				inBau = true;
+				bauTyp = typ;
+				bauStart = System.currentTimeMillis();
+				zielBauAufwand = Gebaeude.getBauAufwand(typ, level.get(typ));
+				doneBauAufwand = 0;
+				lastBauBerechnung = System.currentTimeMillis();
+				material -= Gebaeude.getKosten(typ, level.get(typ));
+				return true;
+			}
+		}
+		return false;
+	}
 	
+	public boolean isInBau() {
+		return inBau;
+	}
+	
+	public double getBauFortschritt() {
+		return doneBauAufwand / zielBauAufwand;
+	}
+
 }

@@ -74,4 +74,14 @@ public class ButtonRect extends Button {
 		return true;
 	}
 
+	@Override
+	public int getPosX() {
+		return posX;
+	}
+
+	@Override
+	public int getPosY() {
+		return posY;
+	}
+
 }

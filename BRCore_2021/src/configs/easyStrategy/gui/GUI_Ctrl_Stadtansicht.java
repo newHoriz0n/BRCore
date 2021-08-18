@@ -26,11 +26,16 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 	private int offYGebaudeButtons = 160;
 	private List<Button> gebaeudeButtons = new ArrayList<>();
 
+	private int bauFortschrittX;
+	private int bauFortschrittY;
+	private int bauFortschrittWidth;
+	private int bauFortschrittHeight;
+
 	public GUI_Ctrl_Stadtansicht(OV_Controller oc, Stadt s, OV_Model m) {
 		super(1, "Stadtansicht", oc.getViewer().getWidth() - 300, 0, 300, oc.getViewer().getHeight(), m);
 		this.s = s;
 
-		updateGebaeudeButton();
+		updateGebaeudeButtons();
 		updateTruppenButtons();
 	}
 
@@ -88,6 +93,11 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 		g2d.setColor(Color.WHITE);
 		g2d.drawString("(+" + s.getAzubis() + ")", 65, 135);
 
+		// Bau
+		if (s.isInBau()) {
+			g2d.setColor(Color.GREEN);
+			g2d.fillRect(bauFortschrittX, bauFortschrittY, (int) (bauFortschrittWidth * s.getBauFortschritt()), bauFortschrittHeight);
+		}
 	}
 
 	@Override
@@ -131,7 +141,7 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 		return buttons;
 	}
 
-	private void updateGebaeudeButton() {
+	private void updateGebaeudeButtons() {
 		removeButtons(gebaeudeButtons);
 		gebaeudeButtons.clear();
 
@@ -139,18 +149,28 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 		int posX = 0;
 		int posY = 200;
 		for (Gebaeude.Typ typ : s.getGebaeudeLevel().keySet()) {
+			final Button gebButton = new ES_BlackRectButton(10 + posX * 70, posY, 60, 60);
+			gebButton.setText(typ.toString().substring(0, 3) + "  [" + s.getGebaeudeLevel().get(typ) + "]");
+			gebButton.setAktionLinks(new Aktion() {
 
-			for (int i = 0; i < 3; i++) {
-				Button gebButton = new ES_BlackRectButton(10 + posX * 70, posY, 60, 60);
-				gebButton.setText(typ.toString().substring(0, 3));
-				gebaeudeButtons.add(gebButton);
-
-				posX++;
-				if (posX >= 4) {
-					posX = 0;
-					posY += 70;
+				@Override
+				public void run() {
+					if (s.upgradeGebaeude(typ)) {
+						bauFortschrittX = gebButton.getPosX() + 2;
+						bauFortschrittY = gebButton.getPosY() + 50;
+						bauFortschrittWidth = 56;
+						bauFortschrittHeight = 8;
+					}
 				}
+			});
+			gebaeudeButtons.add(gebButton);
+
+			posX++;
+			if (posX >= 4) {
+				posX = 0;
+				posY += 70;
 			}
+
 		}
 
 		addButtons(gebaeudeButtons);
@@ -313,6 +333,7 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 	@Override
 	public void updateGUICtrl() {
 		updateTruppenButtons();
+		updateGebaeudeButtons();
 	}
 
 }
