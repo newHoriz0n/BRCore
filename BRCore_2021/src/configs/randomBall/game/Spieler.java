@@ -4,11 +4,13 @@ import java.awt.Color;
 import java.util.Random;
 
 import lib.math.Vektor3D;
+import lib.model.Collidable;
 import lib.model.KreisObjekt;
 
-public class Spieler extends KreisObjekt {
+public class Spieler extends KreisObjekt implements Collidable {
 
 	private Vektor3D speed;
+	private double masse = 80;
 
 	public Spieler(double x, double y, int team, double speed) {
 		super(x, y, 12, getTeamFarbe(team), Color.WHITE);
@@ -48,6 +50,10 @@ public class Spieler extends KreisObjekt {
 
 	}
 
+	public Vektor3D getSpeed() {
+		return speed;
+	}
+
 	public void checkWandCollision(double feldlaenge, double feldbreite) {
 		// Links und Rechts
 		if (posX < 0) {
@@ -66,6 +72,51 @@ public class Spieler extends KreisObjekt {
 			speed.setY(speed.getY() * -1);
 		}
 
+	}
+
+	@Override
+	public double getCenterX() {
+		return posX;
+	}
+
+	@Override
+	public void setCenterX(double x) {
+		this.posX = x;
+	}
+
+	@Override
+	public double getCenterY() {
+		return posY;
+	}
+
+	@Override
+	public void setCenterY(double y) {
+		this.posY = y;
+	}
+
+	@Override
+	public double getSpeedX() {
+		return speed.getX();
+	}
+
+	@Override
+	public void setSpeedX(double vx) {
+		this.speed.setX(vx);
+	}
+
+	@Override
+	public double getSpeedY() {
+		return speed.getY();
+	}
+
+	@Override
+	public void setSpeedY(double vy) {
+		this.speed.setY(vy);
+	}
+
+	@Override
+	public double getMass() {
+		return masse;
 	}
 
 }

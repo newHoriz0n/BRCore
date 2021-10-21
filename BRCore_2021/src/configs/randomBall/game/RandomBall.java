@@ -6,6 +6,7 @@ import java.util.Random;
 import lib.math.Vektor3D;
 import lib.model.KreisObjekt;
 import lib.model.OV_Model;
+import lib.model.phx.Collision;
 
 public class RandomBall extends OV_Model {
 
@@ -15,11 +16,14 @@ public class RandomBall extends OV_Model {
 
 	private Random r = new Random();
 
+	// GameSettings
+	private boolean useSpielerSpeedForSchuss;
+
 	public RandomBall() {
 
 		loadSpielfeld();
 		loadBall();
-		loadSpieler(2, 10, 50);
+		loadSpieler(2, 10, 100);
 
 	}
 
@@ -47,13 +51,22 @@ public class RandomBall extends OV_Model {
 		for (KreisObjekt s : bs) {
 			((Ball) s).checkWandCollision(feld.getLaenge(), feld.getBreite());
 		}
-		
+
+		// Spielerkollisionen
+		for (KreisObjekt k1 : ks) {
+			for (KreisObjekt k2 : ks) {
+				if (k1 != k2) {
+					Collision.calcCollisionCircleCircle((Spieler) k1, (Spieler) k2);
+				}
+			}
+		}
+
 		// Check Ballaufnahme
-		if(b.getBesitzer() == null) {
+		if (b.getBesitzer() == null) {
 			for (KreisObjekt ko : ks) {
 				double d = ko.calcDistanzZu(b.getPosX(), b.getPosY());
-				if(d < b.getRadius() + ko.getRadius()) {
-					b.setBesitzer((Spieler)ko);
+				if (d < b.getRadius() + ko.getRadius()) {
+					b.setBesitzer((Spieler) ko);
 					break;
 				}
 			}
@@ -87,9 +100,16 @@ public class RandomBall extends OV_Model {
 
 	public void schiesse(int realMouseX, int realMouseY) {
 		if (b.getBesitzer() != null) {
-			Vektor3D richtung = new Vektor3D(realMouseX - b.getBesitzer().getPosX(), realMouseY - b.getBesitzer().getPosY(), 0);
+			Vektor3D mausrichtung = new Vektor3D(realMouseX - b.getBesitzer().getPosX(), realMouseY - b.getBesitzer().getPosY(), 0);
+
+			Vektor3D gesamtSchuss = new Vektor3D(mausrichtung.calcXYAngle(), schussspeed);
+
+			if (useSpielerSpeedForSchuss) {
+				gesamtSchuss.add(b.getBesitzer().getSpeed());
+			}
+
 			b.setBesitzer(null);
-			b.schiessen(richtung.calcXYAngle(), schussspeed, 15);
+			b.schiessen(gesamtSchuss, 15);
 		}
 	}
 

@@ -64,6 +64,13 @@ public class Vektor3D {
 		this.z = 0;
 	}
 
+	public void set(Vektor3D v) {
+		this.x = v.x;
+		this.y = v.y;
+		this.z = v.z;
+	}
+
+	
 	public double calcScaleProduct(Vektor3D v) {
 		return x * v.x + y * v.y + z * v.z;
 	}

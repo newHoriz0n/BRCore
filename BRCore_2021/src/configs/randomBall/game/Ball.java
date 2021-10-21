@@ -23,11 +23,11 @@ public class Ball extends KreisObjekt {
 		this.besitzer = besitzer;
 	}
 
-	public void schiessen(double direction, double speed, double startDistance) {
-		this.speed.set(direction, startDistance);
+	public void schiessen(Vektor3D schuss, double startDistance) {
+		this.speed.set(schuss.calcXYAngle(), startDistance);
 		posX += this.speed.getX();
 		posY += this.speed.getY();
-		this.speed.set(direction, speed);
+		this.speed.set(schuss);
 	}
 
 	@Override
