@@ -7,10 +7,20 @@ public class Betrachter_FreierVogel implements Betrachter {
 	private int posX, posY;
 
 	public Betrachter_FreierVogel() {
-		this.posX = 700;
+		this.posX = 0;
 		this.posY = 0;
 	}
 
+	/** Setzt die Mitte des Bildes
+	 * 
+	 * @param posX
+	 * @param posY
+	 */
+	public void setViewPort(int posX, int posY) {
+		this.posX = posX;
+		this.posY = posY;
+	}
+	
 	@Override
 	public void update(long dt) {
 	}
@@ -27,6 +37,7 @@ public class Betrachter_FreierVogel implements Betrachter {
 
 	@Override
 	public void draw(Graphics2D g) {
+		
 	}
 
 	@Override

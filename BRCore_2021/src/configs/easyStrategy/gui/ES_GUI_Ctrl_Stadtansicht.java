@@ -17,7 +17,7 @@ import lib.ctrl.gui.OV_GUI_Controller;
 import lib.ctrl.gui.elements.Button;
 import lib.model.OV_Model;
 
-public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
+public class ES_GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 
 	private Stadt s;
 
@@ -31,7 +31,7 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 	private int bauFortschrittWidth;
 	private int bauFortschrittHeight;
 
-	public GUI_Ctrl_Stadtansicht(OV_Controller oc, Stadt s, OV_Model m) {
+	public ES_GUI_Ctrl_Stadtansicht(OV_Controller oc, Stadt s, OV_Model m) {
 		super(1, "Stadtansicht", oc.getViewer().getWidth() - 300, 0, 300, oc.getViewer().getHeight(), m);
 		this.s = s;
 
@@ -334,6 +334,12 @@ public class GUI_Ctrl_Stadtansicht extends OV_GUI_Controller {
 	public void updateGUICtrl() {
 		updateTruppenButtons();
 		updateGebaeudeButtons();
+	}
+
+	@Override
+	public void drawBackground(Graphics2D g2d) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -6,7 +6,7 @@ import java.util.List;
 
 import configs.easyStrategy.game.EasyStrategy.ES_State;
 import configs.easyStrategy.game.kampf.Einheit;
-import configs.easyStrategy.gui.GUI_Ctrl_Truppenansicht;
+import configs.easyStrategy.gui.ES_GUI_Ctrl_Truppenansicht;
 import lib.ctrl.EEventTyp;
 import lib.ctrl.OV_Controller;
 import lib.ctrl.gui.Aktion;
@@ -40,7 +40,7 @@ public class Truppe extends KreisObjekt {
 
 			@Override
 			public void run() {
-				OV_GUI_Controller sc = new GUI_Ctrl_Truppenansicht("Truppendetailansicht", oc.getViewer().getWidth() - 300, 0, 300,
+				OV_GUI_Controller sc = new ES_GUI_Ctrl_Truppenansicht("Truppendetailansicht", oc.getViewer().getWidth() - 300, 0, 300,
 						oc.getViewer().getHeight(), me, oc.getModel());
 				sc.setHintergrundFarbe(Color.BLACK);
 				oc.addOverLayGC(sc);

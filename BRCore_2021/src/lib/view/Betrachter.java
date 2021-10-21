@@ -15,6 +15,10 @@ public interface Betrachter {
 
 	public double getY();
 
+	/**
+	 * NOT USED
+	 * @param g
+	 */
 	public void draw(Graphics2D g);
 
 	/**

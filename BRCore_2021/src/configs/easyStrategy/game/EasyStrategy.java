@@ -12,7 +12,7 @@ import configs.easyStrategy.game.Ressource.RessourcenTyp;
 import configs.easyStrategy.game.kampf.Kampf;
 import configs.easyStrategy.game.ki.ES_KI;
 import configs.easyStrategy.game.stadt.Stadt;
-import configs.easyStrategy.gui.GUI_Ctrl_Stadtansicht;
+import configs.easyStrategy.gui.ES_GUI_Ctrl_Stadtansicht;
 import lib.ctrl.gui.OV_GUI_Controller;
 import lib.math.Vektor3D;
 import lib.model.KreisObjekt;
@@ -42,6 +42,8 @@ public class EasyStrategy extends OV_Model {
 
 	public EasyStrategy(int spielerZahl) {
 		this.spielerZahl = spielerZahl;
+		
+		// Load und Starte UpdateThread
 		ES_UpdateThread est = new ES_UpdateThread();
 		est.start();
 	}
@@ -249,6 +251,7 @@ public class EasyStrategy extends OV_Model {
 
 	class ES_UpdateThread extends Thread {
 
+		// TODO: Transfer in update()
 		public ES_UpdateThread() {
 
 			Timer t = new Timer();
@@ -280,7 +283,7 @@ public class EasyStrategy extends OV_Model {
 		s.stationiereTruppe(t);
 		t.stationiereTruppe();
 
-		OV_GUI_Controller sc = new GUI_Ctrl_Stadtansicht(oc, s, this);
+		OV_GUI_Controller sc = new ES_GUI_Ctrl_Stadtansicht(oc, s, this);
 		sc.setHintergrundFarbe(Color.BLACK);
 		oc.addOverLayGC(sc);
 		focusTruppe = null;
@@ -311,5 +314,8 @@ public class EasyStrategy extends OV_Model {
 		}
 		return null;
 	}
+
+	@Override
+	public void update() {	}
 
 }

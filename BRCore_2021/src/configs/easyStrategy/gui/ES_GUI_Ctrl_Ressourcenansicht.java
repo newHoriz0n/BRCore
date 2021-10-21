@@ -11,11 +11,11 @@ import lib.ctrl.gui.OV_GUI_Controller;
 import lib.ctrl.gui.elements.Button;
 import lib.model.OV_Model;
 
-public class GUI_Ctrl_Ressourcenansicht extends OV_GUI_Controller {
+public class ES_GUI_Ctrl_Ressourcenansicht extends OV_GUI_Controller {
 
 	private Ressource r;
 
-	public GUI_Ctrl_Ressourcenansicht(String titel, int posX, int posY, int width, int height, Ressource r, OV_Model m) {
+	public ES_GUI_Ctrl_Ressourcenansicht(String titel, int posX, int posY, int width, int height, Ressource r, OV_Model m) {
 		super(1, titel, posX, posY, width, height, m);
 
 		this.r = r;
@@ -45,6 +45,12 @@ public class GUI_Ctrl_Ressourcenansicht extends OV_GUI_Controller {
 
 	@Override
 	public void updateGUICtrl() {
+	}
+
+	@Override
+	public void drawBackground(Graphics2D g2d) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

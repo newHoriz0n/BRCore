@@ -13,9 +13,9 @@ import lib.ctrl.gui.OV_GUI_Controller;
 import lib.ctrl.gui.elements.Button;
 import lib.model.OV_Model;
 
-public class GUI_Ctrl_Main extends OV_GUI_Controller {
+public class ES_GUI_Ctrl_Main extends OV_GUI_Controller {
 
-	public GUI_Ctrl_Main(OV_Model m) {
+	public ES_GUI_Ctrl_Main(OV_Model m) {
 		super(0, "Main", 0, 0, 0, 0, m);
 	}
 
@@ -71,6 +71,12 @@ public class GUI_Ctrl_Main extends OV_GUI_Controller {
 
 	@Override
 	public void updateGUICtrl() {
+	}
+
+	@Override
+	public void drawBackground(Graphics2D g2d) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

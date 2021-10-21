@@ -10,7 +10,7 @@ import lib.model.OV_Model;
 
 public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller> {
 
-	// Verwaltet Buttons
+	// Verwaltet Buttons und View
 
 	protected OV_Model m;
 
@@ -33,6 +33,8 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 
 	private boolean freeMousePress = true; // Maus hat bei Mauspress keinen Button gedrückt.
 
+	private double zoom = 1.0;	// Zoomfaktor
+	
 	public OV_GUI_Controller(int gruppe, String titel, int posX, int posY, int width, int height, OV_Model m) {
 		this.m = m;
 		this.gruppe = gruppe;
@@ -59,6 +61,15 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 		this.farbeHintergrund = f;
 	}
 
+	/**
+	 * 
+	 * @param aktScreenMouseX
+	 * @param aktScreenMouseY
+	 * @param aktRealMausPosX
+	 * @param aktRealMausPosY
+	 * @param button
+	 * @return
+	 */
 	public boolean handleMouseMove(int aktScreenMouseX, int aktScreenMouseY, int aktRealMausPosX, int aktRealMausPosY, int button) {
 		if (isMouseOver(aktScreenMouseX, aktScreenMouseY)) {
 			updateTempButtons();
@@ -152,34 +163,34 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 	/**
 	 * Use drawGUIContent() um eigene Inhalte zu zeichnen
 	 * 
-	 * @param g
+	 * @param g2d
 	 * @param transform
 	 */
-	public void drawGUIController(Graphics2D g, boolean transform) {
+	public void drawGUIController(Graphics2D g2d, boolean transform) {
 		synchronized (ButtonLock) {
 
 			if (farbeHintergrund != null) {
-				g.setColor(farbeHintergrund);
-				g.fillRect(posX, posY, width, height);
+				g2d.setColor(farbeHintergrund);
+				//g2d.fillRect(posX, posY, width, height);
 			}
 
 			if (transform) {
-				g.translate(posX, posY);
+				g2d.translate(posX, posY);
 			}
-			drawGUIBackground(g);
+			drawGUIBackground(g2d);
 
 			updateTempButtons();
 			for (Button b : buttons) {
-				b.draw(g);
+				b.draw(g2d);
 			}
 
-			drawGUIOverlay(g);
+			drawGUIOverlay(g2d);
 
 			if (transform) {
-				g.translate(-posX, -posY);
+				g2d.translate(-posX, -posY);
 			}
 
-			drawGUIStaticOverlay(g);
+			drawGUIStaticOverlay(g2d);
 
 		}
 	}
@@ -283,4 +294,14 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 		return m;
 	}
 
+	public int getWidth() {
+		return width;
+	}
+	
+	public int getHeight() {
+		return height;
+	}
+	
+	public abstract void drawBackground(Graphics2D g2d);
+	
 }

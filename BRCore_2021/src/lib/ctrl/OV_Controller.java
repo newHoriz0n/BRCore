@@ -25,6 +25,16 @@ import lib.model.listener.EUpdateTopic;
 import lib.model.listener.UpdateListener;
 import lib.view.OV_ViewContainer;
 
+/**
+ * Verwaltungsklasse für alle Controller mit Zugriff auf Model, Objektverwaltung und ViewContainer.
+ * 
+ * Implementiert Schnittstellen der Key- und MouseListener.
+ * 
+ * Zeichnet die Controller.
+ * 
+ * @author paulb
+ *
+ */
 public class OV_Controller implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener, UpdateListener {
 
 	private OV_Model m;
@@ -58,7 +68,11 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 
 	}
 
-	public void setViewer(OV_ViewContainer v) {
+	/**
+	 * Zum nachträglichen Setzen des ViewContainers
+	 * @param v
+	 */
+	public void setViewContainer(OV_ViewContainer v) {
 		this.v = v;
 	}
 
@@ -114,7 +128,7 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 	public void mouseDragged(MouseEvent e) {
 
 		if (System.currentTimeMillis() - lastMoveUpdate > moveUpdateRate) {
-			aktRealMausPos = getRealVonScreenKoords(e.getX(), e.getY());
+			aktRealMausPos = getViewContainerKoordsVonScreenKoords(e.getX(), e.getY());
 			lastMoveUpdate = System.currentTimeMillis();
 			for (OV_GUI_Controller c : overlay_gcs) {
 				if (c.handleMouseMoveIntern(e.getX(), e.getY(), e.getButton())) {
@@ -129,7 +143,7 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		if (System.currentTimeMillis() - lastMoveUpdate > moveUpdateRate) {
-			aktRealMausPos = getRealVonScreenKoords(e.getX(), e.getY());
+			aktRealMausPos = getViewContainerKoordsVonScreenKoords(e.getX(), e.getY());
 			lastMoveUpdate = System.currentTimeMillis();
 			for (String id : mouseHandler.keySet()) {
 				mouseHandler.get(id).handleMouseUpdate(this, v);
@@ -183,9 +197,9 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 		main_gc.handleMouseRelease(e.getX(), e.getY(), aktRealMausPos[0], aktRealMausPos[1], e.getButton());
 	}
 
-	public int[] getRealVonScreenKoords(int screenX, int screenY) {
+	public int[] getViewContainerKoordsVonScreenKoords(int screenX, int screenY) {
 		if (v != null) {
-			double[] offset = v.getOffset();
+			double[] offset = v.getScreenCenterViewOffset();
 			return new int[] { (int) (screenX - offset[0]), (int) (screenY - offset[1]) };
 		}
 		return new int[] { -1, -1 };
@@ -224,6 +238,11 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 		}
 	}
 
+	/**
+	 * Zeichnet nur den MainController.
+	 * Für alle anderen Untercontroller siehe drawOverlayGUIs(...).
+	 * @param g2d
+	 */
 	public void draw(Graphics2D g2d) {
 		main_gc.drawGUIController(g2d, false); // Zeichnet Buttons
 		if (showMouseCoords) {
@@ -232,6 +251,10 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 		}
 	}
 
+	/**
+	 * Zeichnet alle OverlayGUIs.
+	 * @param g2d
+	 */
 	public void drawOverlayGUIs(Graphics2D g2d) {
 		for (OV_GUI_Controller c : overlay_gcs) {
 			c.drawGUIController(g2d, true);
@@ -270,6 +293,10 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 		for (OV_GUI_Controller c : overlay_gcs) {
 			c.updateGUICtrl();
 		}
+	}
+
+	public void drawMainBackground(Graphics2D g2d) {
+		main_gc.drawBackground(g2d);	
 	}
 
 }

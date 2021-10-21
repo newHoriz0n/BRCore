@@ -28,10 +28,10 @@ public class Vektor3D {
 		this.z = 0;
 	}
 
-	public Vektor3D(Vektor3D pos) {
-		this.x = pos.x;
-		this.y = pos.y;
-		this.z = pos.z;
+	public Vektor3D(Vektor3D v) {
+		this.x = v.x;
+		this.y = v.y;
+		this.z = v.z;
 	}
 
 	public double getX() {
@@ -44,6 +44,24 @@ public class Vektor3D {
 
 	public double getZ() {
 		return z;
+	}
+	
+	public void setX(double x) {
+		this.x = x;
+	}
+	
+	public void setY(double y) {
+		this.y = y;
+	}
+	
+	public void setZ(double z) {
+		this.z = z;
+	}
+
+	public void set(double direction, double length) {
+		this.x = Math.cos(direction) * length;
+		this.y = Math.sin(direction) * length;
+		this.z = 0;
 	}
 
 	public double calcScaleProduct(Vektor3D v) {
@@ -133,6 +151,7 @@ public class Vektor3D {
 		y = temp_y;
 		return this;
 	}
+
 
 
 }

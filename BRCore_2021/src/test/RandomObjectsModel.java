@@ -62,4 +62,9 @@ public class RandomObjectsModel extends OV_Model {
 	@Override
 	protected void notifyControllerSet() {	}
 
+	@Override
+	public void update() {
+		
+	}
+
 }

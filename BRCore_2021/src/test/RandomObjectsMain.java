@@ -25,7 +25,7 @@ public class RandomObjectsMain {
 		m.setController(tc);
 		
 		OV_ViewContainer v = new OV_ViewContainer(m.getObjektVerwaltung(), tc);
-		tc.setViewer(v);
+		tc.setViewContainer(v);
 
 		OV_MainFrame mf = new OV_MainFrame(v);
 		mf.addKeyListener(tc);

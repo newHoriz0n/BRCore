@@ -10,9 +10,9 @@ import lib.ctrl.gui.OV_GUI_Controller;
 import lib.ctrl.gui.elements.Button;
 import lib.model.OV_Model;
 
-public class GUI_Ctrl_Main_Overlay extends OV_GUI_Controller {
+public class ES_GUI_Ctrl_Main_Overlay extends OV_GUI_Controller {
 
-	public GUI_Ctrl_Main_Overlay(OV_Model m) {
+	public ES_GUI_Ctrl_Main_Overlay(OV_Model m) {
 		super(0, "Main Overlay",0, 0, 0, 0, m);
 	}
 
@@ -41,6 +41,12 @@ public class GUI_Ctrl_Main_Overlay extends OV_GUI_Controller {
 		// State:
 		g2d.setColor(Color.RED);
 		g2d.drawString("" +  ((EasyStrategy) m).getState(), 10, 30);
+	}
+
+	@Override
+	public void drawBackground(Graphics2D g2d) {
+		// TODO Auto-generated method stub
+		
 	}	
 
 }

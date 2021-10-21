@@ -18,11 +18,10 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 	protected int gruppe;
 	private boolean alive;
 
-	protected int radius;
 	protected double posX;
 	protected double posY;
-
 	private double ausrichtung;
+	protected double radius;
 
 	private Color farbeHintergrund;
 	private Color farbeRahmen;
@@ -39,7 +38,7 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 
 	private long lastUpdate;
 
-	public KreisObjekt(double x, double y, int rad, Color hintergrundFarbe, Color rahmenFarbe) {
+	public KreisObjekt(double x, double y, double rad, Color hintergrundFarbe, Color rahmenFarbe) {
 		this.posX = x;
 		this.posY = y;
 		this.radius = rad;
@@ -60,13 +59,17 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 		this.gruppe = gruppe;
 	}
 
+	/**
+	 * 
+	 * @param dt: Zeit seit letzem Update in [ms];
+	 */
 	protected abstract void update(long dt);
 
 	public long getObjectID() {
 		return objectID;
 	}
 
-	public int getRadius() {
+	public double getRadius() {
 		return radius;
 	}
 
@@ -168,6 +171,7 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 				g.drawOval((int) (posX - radius), (int) (posY - radius), (int) (radius * 2), (int) (radius * 2));
 			}
 		}
+		
 	}
 
 	public void drawEntfernt(Graphics2D g, Betrachter b, double screenRadius, double entferntleistenHoehe) {
@@ -210,11 +214,17 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 		return (radius * 2) / randBetrachterDistanz;
 	}
 
+	/**
+	 * Berechnet die euklidische Distanz in der x-y Ebene des Kreisobjekts zur übergebenen Position. Der Radius wird dabei nicht berücksichtigt!
+	 * @param x
+	 * @param y
+	 * @return
+	 */
 	public double calcDistanzZu(double x, double y) {
 		return Math.sqrt(Math.pow(x - posX, 2) + Math.pow(y - posY, 2));
 	}
 
-	public void calcBetrachterDistanz(double x, double y) {
+	private void calcBetrachterDistanz(double x, double y) {
 		this.centerBetrachterDistanz = Math.sqrt(Math.pow(x - posX, 2) + Math.pow(y - posY, 2));
 		this.randBetrachterDistanz = Math.max(0, centerBetrachterDistanz - radius);
 	}

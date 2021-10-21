@@ -3,7 +3,7 @@ package configs.easyStrategy.game;
 import java.awt.Color;
 
 import configs.easyStrategy.game.EasyStrategy.ES_State;
-import configs.easyStrategy.gui.GUI_Ctrl_Ressourcenansicht;
+import configs.easyStrategy.gui.ES_GUI_Ctrl_Ressourcenansicht;
 import lib.ctrl.EEventTyp;
 import lib.ctrl.OV_Controller;
 import lib.ctrl.gui.Aktion;
@@ -32,7 +32,7 @@ public class Ressource extends KreisObjekt {
 
 			@Override
 			public void run() {
-				OV_GUI_Controller sc = new GUI_Ctrl_Ressourcenansicht("Ressourcendetailansicht", oc.getViewer().getWidth() - 300, 0, 300,
+				OV_GUI_Controller sc = new ES_GUI_Ctrl_Ressourcenansicht("Ressourcendetailansicht", oc.getViewer().getWidth() - 300, 0, 300,
 						oc.getViewer().getHeight(), me, oc.getModel());
 				sc.setHintergrundFarbe(Color.BLACK);
 				oc.addOverLayGC(sc);

@@ -1,8 +1,8 @@
 package configs.easyStrategy;
 
 import configs.easyStrategy.game.EasyStrategy;
-import configs.easyStrategy.gui.GUI_Ctrl_Main;
-import configs.easyStrategy.gui.GUI_Ctrl_Main_Overlay;
+import configs.easyStrategy.gui.ES_GUI_Ctrl_Main;
+import configs.easyStrategy.gui.ES_GUI_Ctrl_Main_Overlay;
 import lib.ctrl.OV_Controller;
 import lib.exe.OV_MainFrame;
 import lib.view.Betrachter_FreierVogel;
@@ -15,17 +15,17 @@ public class EasyStrategyMain {
 		Betrachter_FreierVogel b = new Betrachter_FreierVogel();
 		es.setBetrachter(b);
 
-		GUI_Ctrl_Main gc_main = new GUI_Ctrl_Main(es);
+		ES_GUI_Ctrl_Main gc_main = new ES_GUI_Ctrl_Main(es);
 		
 		OV_Controller oc = new OV_Controller(es, gc_main);
 		oc.showMouseCoords(true);
 		
 		es.setController(oc);
 		
-		oc.addOverLayGC(new GUI_Ctrl_Main_Overlay(es));
+		oc.addOverLayGC(new ES_GUI_Ctrl_Main_Overlay(es));
 		
 		OV_ViewContainer v = new OV_ViewContainer(es.getObjektVerwaltung(), oc);
-		oc.setViewer(v);
+		oc.setViewContainer(v);
 
 		OV_MainFrame mf = new OV_MainFrame(v);
 

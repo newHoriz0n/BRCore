@@ -43,7 +43,7 @@ public class Betrachter_FocusObject implements Betrachter {
 		g.setColor(Color.GREEN);
 		int r = 50;
 		if (fokusObjekt != null) {
-			r = fokusObjekt.getRadius() + 3;
+			r = (int) (fokusObjekt.getRadius() + 3);
 		}
 		g.drawOval((int) (getX() - r), (int) (getY() - r), 2 * r, 2 * r);
 	}
@@ -53,7 +53,7 @@ public class Betrachter_FocusObject implements Betrachter {
 		g.setColor(Color.GREEN);
 		int r = 50;
 		if (fokusObjekt != null) {
-			r = fokusObjekt.getRadius() + 3;
+			r = (int) (fokusObjekt.getRadius() + 3);
 		}
 		g.drawOval((int) (x - r), (int) (y - r), 2 * r, 2 * r);
 	}

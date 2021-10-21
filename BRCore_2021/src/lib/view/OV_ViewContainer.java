@@ -3,6 +3,7 @@ package lib.view;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 
@@ -41,6 +42,10 @@ public class OV_ViewContainer extends JPanel {
 
 		Graphics2D g2d = (Graphics2D) g;
 
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+
+		
 		g2d.setColor(Color.WHITE);
 		g2d.fillRect(0, 0, getWidth(), getHeight());
 		
@@ -49,24 +54,29 @@ public class OV_ViewContainer extends JPanel {
 		
 		AffineTransform at = new AffineTransform();
 		at.translate(offset[0], offset[1]);
-		g2d.transform(at);
+		g2d.transform(at);	// Ab hier transformiertes Zeichnen
 		
-		ov.draw(g2d);
-		oc.draw(g2d);
-
+		oc.drawMainBackground(g2d);
+		ov.draw(g2d);	// Objekte zeichnen
+		oc.draw(g2d);	// GUI zeichnen
+		
 		try {
 			at.invert();
 		} catch (NoninvertibleTransformException e) {
 			e.printStackTrace();
 		}
-		g2d.transform(at);
+		g2d.transform(at);	// Ende des transformierten Zeichnens
 
 		oc.drawOverlayGUIs(g2d);
 		ov.getBetrachter().drawFixed(g2d, getWidth() / 2, getHeight() / 2);
 
 	}
 	
-	public double[] getOffset() {
+	/**
+	 * Versatz des Viewports des Betrachters zur Mitte des Bildschirms
+	 * @return
+	 */
+	public double[] getScreenCenterViewOffset() {
 		return offset;
 	}
 	

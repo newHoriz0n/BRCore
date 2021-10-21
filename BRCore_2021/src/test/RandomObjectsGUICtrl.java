@@ -1,5 +1,6 @@
 package test;
 
+import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,6 +31,12 @@ public class RandomObjectsGUICtrl extends OV_GUI_Controller {
 
 	@Override
 	public void updateGUICtrl() {	}
+
+	@Override
+	public void drawBackground(Graphics2D g2d) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 

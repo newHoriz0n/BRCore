@@ -2,7 +2,8 @@ package lib.model;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,8 +21,6 @@ import lib.view.Betrachter_FocusObject;
 import lib.view.OV_ViewContainer;
 
 public class ObjektVerwaltung {
-
-	// private List<KreisObjekt> kreise;
 
 	private HashMap<String, List<KreisObjekt>> kreisKatalog; // Alle bekannten Kreise einsortiert in Gruppen
 
@@ -43,9 +42,7 @@ public class ObjektVerwaltung {
 
 	private Betrachter b;
 
-	private OV_ViewContainer v;
-
-	private long lastUpdate;
+	private OV_ViewContainer viewer;
 
 	private HashMap<EUpdateTopic, List<UpdateListener>> listeners;
 
@@ -76,8 +73,14 @@ public class ObjektVerwaltung {
 		CalcRelevanzThread crt = new CalcRelevanzThread();
 		crt.start();
 
-		BetrachterUpdateThread but = new BetrachterUpdateThread();
-		but.start();
+		javax.swing.Timer viewUpdateTimer = new javax.swing.Timer(5, new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				updateView();
+			}
+		});
+		viewUpdateTimer.start();
 
 	}
 
@@ -85,6 +88,9 @@ public class ObjektVerwaltung {
 		this.b = b;
 	}
 
+	/**
+	 * Updatet alle Kreisobjekte und löscht nicht mehr alive KOs.
+	 */
 	public void updateObjekte() {
 		for (String s : kreisKatalog.keySet()) {
 			for (int i = kreisKatalog.get(s).size() - 1; i >= 0; i--) {
@@ -98,22 +104,30 @@ public class ObjektVerwaltung {
 	}
 
 	public void updateView() {
-		if (v != null) {
-			v.updateUI();
+		if (viewer != null) {
+
+			viewer.repaint();
+			// for (KreisObjekt ko : direktSichtbareKreise) {
+			// viewer.repaint((int) (ko.getPosX() - ko.getRadius()), (int) (ko.getPosY() -
+			// ko.getRadius()), (int) (2 * ko.getRadius()),
+			// (int) (2 * ko.getRadius()));
+			// }
+
 		}
-		long dt = System.nanoTime() - lastUpdate;
-		if (b != null) {
-			// Setze Fokus auf Fokusiertes Objekt
-			if (b.getClass().equals(Betrachter_FocusObject.class)) {
-				((Betrachter_FocusObject) b).setFocusObject(focusedObjekt);
-			}
-			b.update(dt);
-		}
-		lastUpdate = System.nanoTime();
+
+		// long dt = System.nanoTime() - lastUpdate;
+		// if (b != null) {
+		// // Setze Fokus auf Fokusiertes Objekt
+		// if (b.getClass().equals(Betrachter_FocusObject.class)) {
+		// ((Betrachter_FocusObject) b).setFocusObject(focusedObjekt);
+		// }
+		// b.update(dt);
+		// }
+		// lastUpdate = System.nanoTime();
 	}
 
 	public void setView(OV_ViewContainer v) {
-		this.v = v;
+		this.viewer = v;
 	}
 
 	public Betrachter getBetrachter() {
@@ -165,14 +179,18 @@ public class ObjektVerwaltung {
 		}
 		System.out.println("Calc Relevanz - Dauer: " + (System.currentTimeMillis() - start) + " (" + anzahlKreise + ")");
 
-		// long start_sort = System.currentTimeMillis();
-		Collections.sort(direktSichtbareKreiseTemp);
-		// System.out.println("Calc Sort - Dauer: " + (System.currentTimeMillis() -
-		// start_sort) + " (" + direktSichtbareKreiseTemp.size() + ")");
+		if (viewSettings.get(ObjectVerwaltungSettingFields.BULLSEYE).equals(ObjectVerwaltungSettingValues.BULLSEYE_ON)) {
 
-		// Calc Entferntsichtbare
-		// long start_entfernsichtbar = System.currentTimeMillis();
-		Collections.sort(entferntRelevanteKreiseTemp); // nahe Kreise sind bei hohen Indizes
+			// long start_sort = System.currentTimeMillis();
+			Collections.sort(direktSichtbareKreiseTemp);
+			// System.out.println("Calc Sort - Dauer: " + (System.currentTimeMillis() -
+			// start_sort) + " (" + direktSichtbareKreiseTemp.size() + ")");
+
+			// Calc Entferntsichtbare
+			// long start_entfernsichtbar = System.currentTimeMillis();
+			Collections.sort(entferntRelevanteKreiseTemp); // nahe Kreise sind bei hohen Indizes
+		}
+
 		entferntSichtbareKreiseTemp.addAll(entferntRelevanteKreiseTemp);
 
 		// System.out.println("Calc entferntsichtbare - Dauer: " +
@@ -205,9 +223,6 @@ public class ObjektVerwaltung {
 
 	public void draw(Graphics2D g) {
 
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
-
 		// long start = System.currentTimeMillis();
 
 		// Entfernte Kreise
@@ -227,17 +242,17 @@ public class ObjektVerwaltung {
 						entferntSichtbareKreise.get(i).drawEntfernt(g, b, screenRadius, entferntleistenHoehe);
 					}
 				}
+				// Hauptfeld clearen
+				g.setColor(Color.WHITE);
+				g.fillOval((int) (b.getX() - screenRadius + entferntleistenHoehe), (int) (b.getY() - screenRadius + entferntleistenHoehe),
+						(int) (2 * (screenRadius - entferntleistenHoehe)), (int) ((screenRadius - entferntleistenHoehe) * 2));
 			}
-
-			// Hauptfeld clearen
-			g.setColor(Color.WHITE);
-			g.fillOval((int) (b.getX() - screenRadius + entferntleistenHoehe), (int) (b.getY() - screenRadius + entferntleistenHoehe),
-					(int) (2 * (screenRadius - entferntleistenHoehe)), (int) ((screenRadius - entferntleistenHoehe) * 2));
 
 			// Nahe Kreise
 			for (KreisObjekt k : direktSichtbareKreise) {
 				k.draw(g, b, screenRadius, viewSettings.get(ObjectVerwaltungSettingFields.BULLSEYE));
 			}
+
 			g.setClip(null);
 
 		}
@@ -259,25 +274,8 @@ public class ObjektVerwaltung {
 
 		calcRelevanzen();
 
-		if (v != null) {
-			v.updateUI();
-		}
-
-	}
-
-	class BetrachterUpdateThread extends Thread {
-
-		public BetrachterUpdateThread() {
-
-			Timer t = new Timer();
-			TimerTask tt = new TimerTask() {
-
-				@Override
-				public void run() {
-					updateView();
-				}
-			};
-			t.scheduleAtFixedRate(tt, 0, 30);
+		if (viewer != null) {
+			viewer.updateUI();
 		}
 
 	}
@@ -336,14 +334,38 @@ public class ObjektVerwaltung {
 		kreisKatalog.get(gruppe).remove(t);
 	}
 
-	public List<KreisObjekt> getKreisVonKategorie(String gruppenName) {
-		if (kreisKatalog.containsKey(gruppenName)) {
-			return kreisKatalog.get(gruppenName);
-		} else {
-			return new ArrayList<>();
+	/**
+	 * Gibt die Kreisobjekte der Kategorien zurück, die dem übergebenen regEX
+	 * entsprechen.
+	 * 
+	 * @param regEX:
+	 *            Stringpattern, nach dem in den Kategorien gesucht wird.
+	 * @return
+	 */
+	public List<KreisObjekt> getKreisVonKategorie(String regEX) {
+
+		List<KreisObjekt> kos = new ArrayList<>();
+
+		for (String key : kreisKatalog.keySet()) {
+			if (key.matches(regEX)) {
+				kos.addAll(kreisKatalog.get(key));
+			}
 		}
+
+		return kos;
+
 	}
 
+	/**
+	 * Überprüft alle direkt sichtbaren Kreise aus KreisGruppe1 auf Kollisionen mit
+	 * Kreisen aus KreisGruppe2. Kollisionen mit sich selbst werden abgefangen.
+	 * 
+	 * @param kreisGruppe1:
+	 *            KreisObjekte.gruppe
+	 * @param kreisGruppe2:
+	 *            KreisObjekte.gruppe
+	 * @return
+	 */
 	public List<Collision> checkRelevantCollision(int kreisGruppe1, int kreisGruppe2) {
 		List<Collision> cols = new ArrayList<>();
 		synchronized (realLock) {

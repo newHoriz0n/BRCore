@@ -12,7 +12,7 @@ import configs.easyStrategy.game.RessourcenAbbau;
 import configs.easyStrategy.game.Spieler;
 import configs.easyStrategy.game.Truppe;
 import configs.easyStrategy.game.stadt.Gebaeude.Typ;
-import configs.easyStrategy.gui.GUI_Ctrl_Stadtansicht;
+import configs.easyStrategy.gui.ES_GUI_Ctrl_Stadtansicht;
 import lib.ctrl.EEventTyp;
 import lib.ctrl.OV_Controller;
 import lib.ctrl.gui.Aktion;
@@ -73,7 +73,7 @@ public class Stadt extends KreisObjekt {
 		setEventAktion(EEventTyp.MAUSKLICK_LINKS, new Aktion() {
 			@Override
 			public void run() {
-				OV_GUI_Controller sc = new GUI_Ctrl_Stadtansicht(oc, me, oc.getModel());
+				OV_GUI_Controller sc = new ES_GUI_Ctrl_Stadtansicht(oc, me, oc.getModel());
 				sc.setHintergrundFarbe(Color.BLACK);
 				oc.addOverLayGC(sc);
 				((EasyStrategy) oc.getModel()).setFocusStadt(me);
