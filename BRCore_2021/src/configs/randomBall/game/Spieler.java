@@ -12,10 +12,12 @@ public class Spieler extends KreisObjekt implements Collidable {
 	private Vektor3D speed;
 	private double masse = 80;
 
-	public Spieler(double x, double y, int team, double speed) {
-		super(x, y, 12, getTeamFarbe(team), Color.WHITE);
+	public Spieler(double x, double y, int team, double speed, double radius) {
+		super(x, y, radius, getTeamFarbe(team), Color.WHITE);
 
 		loadRandomBewegung(speed);
+		
+		setClickable(false);
 
 	}
 

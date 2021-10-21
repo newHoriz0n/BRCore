@@ -17,13 +17,17 @@ public class RandomBall extends OV_Model {
 	private Random r = new Random();
 
 	// GameSettings
-	private boolean useSpielerSpeedForSchuss;
+	private boolean useSpielerSpeedForSchuss = false;
+	private double startSpielerSpeed = 50;
+	private boolean teamCollisions = false;
+	private double spielerRadius  = 15;
+	private double ballRadius = 5;
 
 	public RandomBall() {
 
 		loadSpielfeld();
 		loadBall();
-		loadSpieler(2, 10, 100);
+		loadSpieler(2, 10, startSpielerSpeed);
 
 	}
 
@@ -31,7 +35,7 @@ public class RandomBall extends OV_Model {
 		for (int i = 0; i < teams; i++) {
 			for (int j = 0; j < spielerProTeam; j++) {
 				Spieler s = new Spieler(r.nextDouble() * (feld.getLaenge() - (feld.getLaenge() * 0.1) + feld.getLaenge() * 0.05),
-						r.nextDouble() * (feld.getBreite() - (feld.getBreite() * 0.1) + feld.getBreite() * 0.05), i, speed);
+						r.nextDouble() * (feld.getBreite() - (feld.getBreite() * 0.1) + feld.getBreite() * 0.05), i, speed, spielerRadius);
 				s.setGruppe(i);
 				ov.addKreis(s, "Spieler");
 			}
@@ -56,7 +60,14 @@ public class RandomBall extends OV_Model {
 		for (KreisObjekt k1 : ks) {
 			for (KreisObjekt k2 : ks) {
 				if (k1 != k2) {
-					Collision.calcCollisionCircleCircle((Spieler) k1, (Spieler) k2);
+					if (teamCollisions || k1.getGruppe() != k2.getGruppe())
+						if (Collision.calcCollisionCircleCircle((Spieler) k1, (Spieler) k2)) {
+							if (k1.equals(b.getBesitzer())) {
+								b.setBesitzer((Spieler) k2);
+							} else if (k2.equals(b.getBesitzer())) {
+								b.setBesitzer((Spieler) k1);
+							}
+						}
 				}
 			}
 		}
@@ -78,7 +89,7 @@ public class RandomBall extends OV_Model {
 	}
 
 	private void loadBall() {
-		Ball ball = new Ball(feld.getLaenge() / 2, feld.getBreite() / 2);
+		Ball ball = new Ball(feld.getLaenge() / 2, feld.getBreite() / 2, ballRadius);
 		ov.addKreis(ball, "Ball");
 
 		this.b = ball;
@@ -109,7 +120,7 @@ public class RandomBall extends OV_Model {
 			}
 
 			b.setBesitzer(null);
-			b.schiessen(gesamtSchuss, 15);
+			b.schiessen(gesamtSchuss, ballRadius + spielerRadius);
 		}
 	}
 

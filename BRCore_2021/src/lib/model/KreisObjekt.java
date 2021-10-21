@@ -17,6 +17,7 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 	private long objectID;
 	protected int gruppe;
 	private boolean alive;
+	private boolean clickable = true;
 
 	protected double posX;
 	protected double posY;
@@ -60,8 +61,18 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 	}
 
 	/**
+	 * Legt fest, ob das KreisObjekt als Button reagiert.
 	 * 
-	 * @param dt: Zeit seit letzem Update in [ms];
+	 * @param enabled
+	 */
+	public void setClickable(boolean enabled) {
+		this.clickable = enabled;
+	}
+
+	/**
+	 * 
+	 * @param dt:
+	 *            Zeit seit letzem Update in [ms];
 	 */
 	protected abstract void update(long dt);
 
@@ -171,7 +182,7 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 				g.drawOval((int) (posX - radius), (int) (posY - radius), (int) (radius * 2), (int) (radius * 2));
 			}
 		}
-		
+
 	}
 
 	public void drawEntfernt(Graphics2D g, Betrachter b, double screenRadius, double entferntleistenHoehe) {
@@ -215,7 +226,9 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 	}
 
 	/**
-	 * Berechnet die euklidische Distanz in der x-y Ebene des Kreisobjekts zur übergebenen Position. Der Radius wird dabei nicht berücksichtigt!
+	 * Berechnet die euklidische Distanz in der x-y Ebene des Kreisobjekts zur
+	 * übergebenen Position. Der Radius wird dabei nicht berücksichtigt!
+	 * 
 	 * @param x
 	 * @param y
 	 * @return
@@ -294,7 +307,9 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 			return false;
 		return true;
 	}
-	
-	
+
+	public boolean isClickable() {
+		return clickable;
+	}
 
 }

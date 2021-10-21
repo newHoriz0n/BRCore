@@ -14,8 +14,8 @@ public class Ball extends KreisObjekt {
 
 	private Vektor3D speed;
 
-	public Ball(double x, double y) {
-		super(x, y, 3, Color.WHITE, Color.BLACK);
+	public Ball(double x, double y, double ballRadius) {
+		super(x, y, ballRadius, Color.WHITE, Color.BLACK);
 		this.speed = new Vektor3D();
 	}
 

@@ -26,7 +26,8 @@ import lib.model.listener.UpdateListener;
 import lib.view.OV_ViewContainer;
 
 /**
- * Verwaltungsklasse für alle Controller mit Zugriff auf Model, Objektverwaltung und ViewContainer.
+ * Verwaltungsklasse für alle Controller mit Zugriff auf Model, Objektverwaltung
+ * und ViewContainer.
  * 
  * Implementiert Schnittstellen der Key- und MouseListener.
  * 
@@ -70,6 +71,7 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 
 	/**
 	 * Zum nachträglichen Setzen des ViewContainers
+	 * 
 	 * @param v
 	 */
 	public void setViewContainer(OV_ViewContainer v) {
@@ -215,32 +217,35 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 
 			List<Button> bs = new ArrayList<>();
 			for (KreisObjekt k : ov.getDirektSichtbareKreise()) {
-				ButtonRound b = new ButtonRound((int) k.getPosX(), (int) k.getPosY(), (int) k.getRadius());
-				b.setAktionLinks(new Aktion() {
+				if (k.isClickable()) {
+					ButtonRound b = new ButtonRound((int) k.getPosX(), (int) k.getPosY(), (int) k.getRadius());
+					b.setAktionLinks(new Aktion() {
 
-					@Override
-					public void run() {
-						k.handleEvent(EEventTyp.MAUSKLICK_LINKS);
-						ov.setFocusedObject(k);
-					}
-				});
-				b.setAktionRechts(new Aktion() {
+						@Override
+						public void run() {
+							k.handleEvent(EEventTyp.MAUSKLICK_LINKS);
+							ov.setFocusedObject(k);
+						}
+					});
+					b.setAktionRechts(new Aktion() {
 
-					@Override
-					public void run() {
-						k.handleEvent(EEventTyp.MAUSKLICK_RECHTS);
-						ov.setFocusedObject(k);
-					}
-				});
-				bs.add(b);
+						@Override
+						public void run() {
+							k.handleEvent(EEventTyp.MAUSKLICK_RECHTS);
+							ov.setFocusedObject(k);
+						}
+					});
+					bs.add(b);
+				}
 			}
 			main_gc.setCurrentButtons(bs);
 		}
 	}
 
 	/**
-	 * Zeichnet nur den MainController.
-	 * Für alle anderen Untercontroller siehe drawOverlayGUIs(...).
+	 * Zeichnet nur den MainController. Für alle anderen Untercontroller siehe
+	 * drawOverlayGUIs(...).
+	 * 
 	 * @param g2d
 	 */
 	public void draw(Graphics2D g2d) {
@@ -253,6 +258,7 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 
 	/**
 	 * Zeichnet alle OverlayGUIs.
+	 * 
 	 * @param g2d
 	 */
 	public void drawOverlayGUIs(Graphics2D g2d) {
@@ -283,11 +289,11 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 			}
 		}
 	}
-	
+
 	public OV_Model getModel() {
 		return m;
 	}
-	
+
 	public void updateGUIs() {
 		main_gc.updateGUICtrl();
 		for (OV_GUI_Controller c : overlay_gcs) {
@@ -296,7 +302,7 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 	}
 
 	public void drawMainBackground(Graphics2D g2d) {
-		main_gc.drawBackground(g2d);	
+		main_gc.drawBackground(g2d);
 	}
 
 }
