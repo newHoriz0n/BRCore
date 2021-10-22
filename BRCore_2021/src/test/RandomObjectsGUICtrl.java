@@ -37,6 +37,12 @@ public class RandomObjectsGUICtrl extends OV_GUI_Controller {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public void handleFreeMouseMove(int aktScreenMouseX, int aktScreenMouseY, int aktRealMausPosX, int aktRealMausPosY, int button) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 

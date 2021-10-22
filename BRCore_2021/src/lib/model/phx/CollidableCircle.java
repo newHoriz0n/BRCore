@@ -1,6 +1,6 @@
-package lib.model;
+package lib.model.phx;
 
-public interface Collidable {
+public interface CollidableCircle {
 
 	public double getCenterX();
 
@@ -21,4 +21,9 @@ public interface Collidable {
 	public double getMass();
 
 	public double getRadius();
+
+	public static CollidableCircleMinimized getCCMinimized(CollidableCircle c) {
+		return new CollidableCircleMinimized(c);
+	}
+	
 }

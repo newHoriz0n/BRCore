@@ -177,7 +177,7 @@ public class ObjektVerwaltung {
 
 			}
 		}
-		System.out.println("Calc Relevanz - Dauer: " + (System.currentTimeMillis() - start) + " (" + anzahlKreise + ")");
+//		System.out.println("Calc Relevanz - Dauer: " + (System.currentTimeMillis() - start) + " (" + anzahlKreise + ")");
 
 		if (viewSettings.get(ObjectVerwaltungSettingFields.BULLSEYE).equals(ObjectVerwaltungSettingValues.BULLSEYE_ON)) {
 

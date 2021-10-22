@@ -312,4 +312,8 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 		return clickable;
 	}
 
+	public void setHintergrundFarbe(Color c) {
+		this.farbeHintergrund = c;
+	}
+
 }

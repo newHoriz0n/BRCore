@@ -47,6 +47,12 @@ public class ES_GUI_Ctrl_Main_Overlay extends OV_GUI_Controller {
 	public void drawBackground(Graphics2D g2d) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void handleFreeMouseMove(int aktScreenMouseX, int aktScreenMouseY, int aktRealMausPosX, int aktRealMausPosY, int button) {
+		// TODO Auto-generated method stub
+		
 	}	
 
 }

@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import configs.randomBall.game.Hindernis;
 import configs.randomBall.game.RandomBall;
 import configs.randomBall.game.Spielfeld;
 import lib.ctrl.gui.OV_GUI_Controller;
@@ -17,7 +18,7 @@ public class RB_GUI_Ctrl_Main extends OV_GUI_Controller {
 	private Color fRasen = new Color(0, 150, 50);
 
 	public RB_GUI_Ctrl_Main(OV_Model m) {
-		super(0, "Main", 0, 0, (int) ((RandomBall)m).getFeld().getLaenge(), (int) ((RandomBall)m).getFeld().getBreite(), m);
+		super(0, "Main", 0, 0, (int) ((RandomBall) m).getFeld().getLaenge(), (int) ((RandomBall) m).getFeld().getBreite(), m);
 	}
 
 	@Override
@@ -28,9 +29,14 @@ public class RB_GUI_Ctrl_Main extends OV_GUI_Controller {
 
 	@Override
 	public void handleFreeMouseRelease(int realMouseX, int realMouseY, int button) {
-		((RandomBall)m).schiesse(realMouseX, realMouseY);
+		((RandomBall) m).schiesse(realMouseX, realMouseY);
 	}
 
+	@Override
+	public void handleFreeMouseMove(int aktScreenMouseX, int aktScreenMouseY, int aktRealMausPosX, int aktRealMausPosY, int button) {	}
+
+	
+	
 	@Override
 	protected List<Button> loadButtons() {
 		return new ArrayList<Button>();
@@ -52,6 +58,15 @@ public class RB_GUI_Ctrl_Main extends OV_GUI_Controller {
 		g2d.setStroke(new BasicStroke(5));
 		g2d.drawRect(0, 0, (int) (f.getLaenge()), (int) (f.getBreite()));
 		g2d.setStroke(new BasicStroke());
+
+		// Hindernisse
+		for (Hindernis h : ((RandomBall) m).getHindernisse()) {
+			h.draw(g2d);
+			h.getForm().getExpandedPolygon(15).drawPolygon2D(g2d);
+			
+		}
+		
+		
 	}
 
 }

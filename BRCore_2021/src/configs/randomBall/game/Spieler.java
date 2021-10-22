@@ -4,10 +4,10 @@ import java.awt.Color;
 import java.util.Random;
 
 import lib.math.Vektor3D;
-import lib.model.Collidable;
 import lib.model.KreisObjekt;
+import lib.model.phx.CollidableCircle;
 
-public class Spieler extends KreisObjekt implements Collidable {
+public class Spieler extends KreisObjekt implements CollidableCircle {
 
 	private Vektor3D speed;
 	private double masse = 80;

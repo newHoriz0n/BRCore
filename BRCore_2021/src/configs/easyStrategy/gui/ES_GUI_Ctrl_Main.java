@@ -79,4 +79,10 @@ public class ES_GUI_Ctrl_Main extends OV_GUI_Controller {
 		
 	}
 
+	@Override
+	public void handleFreeMouseMove(int aktScreenMouseX, int aktScreenMouseY, int aktRealMausPosX, int aktRealMausPosY, int button) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

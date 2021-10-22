@@ -62,7 +62,7 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 	}
 
 	/**
-	 * 
+	 * Behandlung von Mouse Move für Main GUI
 	 * @param aktScreenMouseX
 	 * @param aktScreenMouseY
 	 * @param aktRealMausPosX
@@ -72,6 +72,9 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 	 */
 	public boolean handleMouseMove(int aktScreenMouseX, int aktScreenMouseY, int aktRealMausPosX, int aktRealMausPosY, int button) {
 		if (isMouseOver(aktScreenMouseX, aktScreenMouseY)) {
+			// 
+			handleFreeMouseMove(aktScreenMouseX, aktScreenMouseY, aktRealMausPosX, aktRealMausPosY, button);
+			// Buttons
 			updateTempButtons();
 			for (Button b : buttons) {
 				b.handleMouseMove(aktRealMausPosX, aktRealMausPosY);
@@ -80,7 +83,16 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 		}
 		return false;
 	}
+	
+	public abstract void handleFreeMouseMove(int aktScreenMouseX, int aktScreenMouseY, int aktRealMausPosX, int aktRealMausPosY, int button);
 
+	/**
+	 * Behandlung von Mouse Move für Overlay GUIs
+	 * @param aktScreenMouseX
+	 * @param aktScreenMouseY
+	 * @param button
+	 * @return
+	 */
 	public boolean handleMouseMoveIntern(int aktScreenMouseX, int aktScreenMouseY, int button) {
 		if (isMouseOver(aktScreenMouseX, aktScreenMouseY)) {
 			int[] internMausCoords = getGUICoordsVonScreenCoords(aktScreenMouseX, aktScreenMouseY);
@@ -157,7 +169,7 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 		}
 		return false;
 	}
-
+	
 	public abstract void handleFreeMouseRelease(int realMouseX, int realMouseY, int button);
 
 	/**

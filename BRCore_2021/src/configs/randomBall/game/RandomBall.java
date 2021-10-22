@@ -1,5 +1,7 @@
 package configs.randomBall.game;
 
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -14,21 +16,30 @@ public class RandomBall extends OV_Model {
 	private Ball b;
 	private double schussspeed = 300;
 
+	private List<Hindernis> hindernisse;
+
 	private Random r = new Random();
 
 	// GameSettings
 	private boolean useSpielerSpeedForSchuss = false;
-	private double startSpielerSpeed = 50;
+	private double startSpielerSpeed = 150;
 	private boolean teamCollisions = false;
-	private double spielerRadius  = 15;
+	private double spielerRadius = 15;
 	private double ballRadius = 5;
 
 	public RandomBall() {
 
 		loadSpielfeld();
 		loadBall();
-		loadSpieler(2, 10, startSpielerSpeed);
+		loadSpieler(1, 100, startSpielerSpeed);
 
+		loadHindernisse();
+
+	}
+
+	private void loadHindernisse() {
+		this.hindernisse = new ArrayList<>();
+		hindernisse.add(new Hindernis(new double[] { 100, 300, 200 }, new double[] { 400, 400, 500 }));
 	}
 
 	private void loadSpieler(int teams, int spielerProTeam, double speed) {
@@ -40,7 +51,10 @@ public class RandomBall extends OV_Model {
 				ov.addKreis(s, "Spieler");
 			}
 		}
-		((Ball) ov.getKreisVonKategorie("Ball").get(0)).setBesitzer((Spieler) ov.getKreisVonKategorie("Spieler").get(0));
+		List<KreisObjekt> spielerliste = ov.getKreisVonKategorie("Spieler");
+		if (spielerliste.size() > 0) {
+			((Ball) ov.getKreisVonKategorie("Ball").get(0)).setBesitzer((Spieler) spielerliste.get(0));
+		}
 	}
 
 	public void updateRB() {
@@ -50,6 +64,13 @@ public class RandomBall extends OV_Model {
 		List<KreisObjekt> ks = ov.getKreisVonKategorie("Spieler");
 		for (KreisObjekt s : ks) {
 			((Spieler) s).checkWandCollision(feld.getLaenge(), feld.getBreite());
+			for (Hindernis h : hindernisse) {
+				if (Collision.calcCollisionCircleFixPolygon((Spieler) s, h.getForm())) {
+					s.setHintergrundFarbe(Color.GREEN);
+				} else {
+					s.setHintergrundFarbe(Color.BLUE);
+				}
+			}
 		}
 		List<KreisObjekt> bs = ov.getKreisVonKategorie("Ball");
 		for (KreisObjekt s : bs) {
@@ -82,6 +103,7 @@ public class RandomBall extends OV_Model {
 				}
 			}
 		}
+
 	}
 
 	public Spielfeld getFeld() {
@@ -122,6 +144,10 @@ public class RandomBall extends OV_Model {
 			b.setBesitzer(null);
 			b.schiessen(gesamtSchuss, ballRadius + spielerRadius);
 		}
+	}
+
+	public List<Hindernis> getHindernisse() {
+		return hindernisse;
 	}
 
 }

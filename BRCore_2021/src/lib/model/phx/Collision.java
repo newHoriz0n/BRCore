@@ -1,6 +1,11 @@
 package lib.model.phx;
 
-import lib.model.Collidable;
+import java.awt.Polygon;
+import java.awt.geom.Line2D;
+import java.util.ArrayList;
+import java.util.List;
+
+import lib.math.Polygon2D;
 import lib.model.KreisObjekt;
 
 public class Collision {
@@ -23,7 +28,8 @@ public class Collision {
 
 	static double EPSILON = 0.0001;
 
-	public static boolean calcCollisionCircleCircle(Collidable p_c1, Collidable p_c2) { // l_n: Normalenvektor (Verbindung zwischen den beiden Kugeln)
+	public static boolean calcCollisionCircleCircle(CollidableCircle p_c1, CollidableCircle p_c2) { // l_n: Normalenvektor (Verbindung zwischen den
+																									// beiden Kugeln)
 		double l_nx = p_c2.getCenterX() - p_c1.getCenterX();
 		double l_ny = p_c2.getCenterY() - p_c1.getCenterY();
 
@@ -133,6 +139,43 @@ public class Collision {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * 
+	 */
+	public static boolean calcCollisionCircleFixPolygon(CollidableCircle c, Polygon2D p) {
+
+		// Berechne Kollisionspolygon als Polygon mit Kreisen an den Ecken mit Radius
+		// des CC und Strecken zwischen den Kreisen mit Abstand Radius des CC vom
+		// Ursprungspolygon
+
+		List<CollidableCircle> eckKreise = new ArrayList<CollidableCircle>();
+		for (int i = 0; i < p.getXs().length; i++) {
+			eckKreise.add(new FixCollisionCircle(p.getXs()[i], p.getIntYs()[i], c.getRadius()));
+		}
+
+		boolean kollision = false;
+		
+		// Berechne Kollisionen zu Eckkreisen
+		for (CollidableCircle e : eckKreise) {
+			if(calcCollisionCircleCircle(CollidableCircle.getCCMinimized(c), e)) {
+				kollision = true;
+				break;
+			}
+		}
+		
+		if(p.getExpandedPolygon(c.getRadius()).contains(c.getCenterX(), c.getCenterY())) {
+			return true;
+		}
+		
+		// Berechne Kollisionen zu Kanten
+		List<Line2D.Double> kanten = p.getExpandedPolygon(c.getRadius()).getSegments();
+
+		
+		// TODO: Bestimme Abstand von Kreismittelpunkt zu jedem Segment
+
+		return false;
 	}
 
 }
