@@ -62,7 +62,7 @@ public class RB_GUI_Ctrl_Main extends OV_GUI_Controller {
 		// Hindernisse
 		for (Hindernis h : ((RandomBall) m).getHindernisse()) {
 			h.draw(g2d);
-			h.getForm().getExpandedPolygon(15).drawPolygon2D(g2d);
+//			h.getForm().getExpandedPolygon(15).drawPolygon2D(g2d);
 			
 		}
 		

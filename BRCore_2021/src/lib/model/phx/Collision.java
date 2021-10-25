@@ -1,11 +1,11 @@
 package lib.model.phx;
 
-import java.awt.Polygon;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.List;
 
 import lib.math.Polygon2D;
+import lib.math.Vektor3D;
 import lib.model.KreisObjekt;
 
 public class Collision {
@@ -142,7 +142,13 @@ public class Collision {
 	}
 
 	/**
+	 * Berechnet die Kollision für einen Kreis an einem festen Polygon.
 	 * 
+	 * @param c
+	 *            Kreis für den Überprüft wird, ob er mit festem Polygon kollidiert
+	 * @param p
+	 *            Polygon zu dem Kollision berechnet wird
+	 * @return true, wenn Kollision stattfindet
 	 */
 	public static boolean calcCollisionCircleFixPolygon(CollidableCircle c, Polygon2D p) {
 
@@ -150,30 +156,58 @@ public class Collision {
 		// des CC und Strecken zwischen den Kreisen mit Abstand Radius des CC vom
 		// Ursprungspolygon
 
+		CollidableCircleMinimized ccm = CollidableCircle.getCCMinimized(c);
+
+		// Berechne Kollision zu Polygon
+		Polygon2D exPo = p.getExpandedPolygon(c.getRadius());
+		if (exPo.contains(c.getCenterX(), c.getCenterY())) {
+
+			// Bestimme Kante an der Kollision stattfindet
+			for (Line2D.Double l : exPo.getSegments()) {
+
+				if (l.intersectsLine(ccm.getCenterX(), ccm.getCenterY(), ccm.getCenterX() - ccm.getSpeedX(), ccm.getCenterY() - ccm.getSpeedY())) {
+					// System.out.println(l.x1 + "," + l.y1 + "," + l.x2 + "," + l.y2);
+
+					// Setze Kreismittelpunkt von c auf Schnittpunkt
+
+					// c.setCenterX(c.getCenterX() - c.getSpeedX());
+					// c.setCenterY(c.getCenterY() - c.getSpeedY());
+
+					// Verändere Speed von c im Sinne der Kollision
+					Vektor3D v0 = new Vektor3D(c.getSpeedX(), c.getSpeedY(), 0);
+					double aV0 = v0.calcXYAngle();
+					Vektor3D k = new Vektor3D(l.x2 - l.x1, l.y2 - l.y1, 0);
+					double ak = k.calcXYAngle();
+					double angle = aV0 - ak;
+					v0.set(aV0 - (2 * angle), v0.calcAbsValue());
+					c.setSpeedX(v0.getX());
+					c.setSpeedY(v0.getY());
+					
+					// TODO: Setze Kreis auf Position, sodass zurückgelegte Distanz im Frame gleichbleibt.
+
+					// System.out.println("aV0: " + aV0);
+					// System.out.println("ak: " + ak);
+					// System.out.println("ges: " + angle);
+
+					break;
+				}
+			}
+
+			return true;
+		}
+
+		// Berechne Kollisionen zu Eckkreisen
+
 		List<CollidableCircle> eckKreise = new ArrayList<CollidableCircle>();
 		for (int i = 0; i < p.getXs().length; i++) {
 			eckKreise.add(new FixCollisionCircle(p.getXs()[i], p.getIntYs()[i], c.getRadius()));
 		}
 
-		boolean kollision = false;
-		
-		// Berechne Kollisionen zu Eckkreisen
 		for (CollidableCircle e : eckKreise) {
-			if(calcCollisionCircleCircle(CollidableCircle.getCCMinimized(c), e)) {
-				kollision = true;
-				break;
+			if (calcCollisionCircleCircle(ccm, e)) {
+				return true;
 			}
 		}
-		
-		if(p.getExpandedPolygon(c.getRadius()).contains(c.getCenterX(), c.getCenterY())) {
-			return true;
-		}
-		
-		// Berechne Kollisionen zu Kanten
-		List<Line2D.Double> kanten = p.getExpandedPolygon(c.getRadius()).getSegments();
-
-		
-		// TODO: Bestimme Abstand von Kreismittelpunkt zu jedem Segment
 
 		return false;
 	}

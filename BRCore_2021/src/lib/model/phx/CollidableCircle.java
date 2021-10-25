@@ -21,7 +21,7 @@ public interface CollidableCircle {
 	public double getMass();
 
 	public double getRadius();
-
+	
 	public static CollidableCircleMinimized getCCMinimized(CollidableCircle c) {
 		return new CollidableCircleMinimized(c);
 	}

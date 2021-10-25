@@ -125,4 +125,8 @@ public class Polygon2D {
 
 	}
 
+	public int length() {
+		return xs.length;
+	}
+
 }

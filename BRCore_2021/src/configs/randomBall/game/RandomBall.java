@@ -29,9 +29,9 @@ public class RandomBall extends OV_Model {
 
 	public RandomBall() {
 
-		loadSpielfeld();
+		loadSpielfeld(400, 300);
 		loadBall();
-		loadSpieler(1, 100, startSpielerSpeed);
+		loadSpieler(1, 10, startSpielerSpeed);
 
 		loadHindernisse();
 
@@ -39,7 +39,7 @@ public class RandomBall extends OV_Model {
 
 	private void loadHindernisse() {
 		this.hindernisse = new ArrayList<>();
-		hindernisse.add(new Hindernis(new double[] { 100, 300, 200 }, new double[] { 400, 400, 500 }));
+		hindernisse.add(new Hindernis(new double[] { 120, 200, 250, 100 }, new double[] { 100, 150, 200, 250 }));
 	}
 
 	private void loadSpieler(int teams, int spielerProTeam, double speed) {
@@ -118,8 +118,8 @@ public class RandomBall extends OV_Model {
 
 	}
 
-	private void loadSpielfeld() {
-		this.feld = new Spielfeld(1000, 650);
+	private void loadSpielfeld(double laenge, double breite) {
+		this.feld = new Spielfeld(laenge, breite);
 	}
 
 	@Override

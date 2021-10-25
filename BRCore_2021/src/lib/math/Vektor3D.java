@@ -129,9 +129,14 @@ public class Vektor3D {
 		return new Vektor3D(-y, x, 0);
 	}
 
+	public double calcXYAngleToVektor3D(Vektor3D v) {
+		return calcXYAngle() - v.calcXYAngle();
+	}
+	
 	public double calcAbsValue() {
 		return Math.sqrt((x * x) + (y * y) + (z * z));
 	}
+	
 
 	/**
 	 * 0 := x=1, y=0, CCW
