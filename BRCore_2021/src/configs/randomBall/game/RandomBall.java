@@ -9,6 +9,7 @@ import lib.math.Vektor3D;
 import lib.model.KreisObjekt;
 import lib.model.OV_Model;
 import lib.model.phx.Collision;
+import lib.model.phx.Hindernis;
 
 public class RandomBall extends OV_Model {
 

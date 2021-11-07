@@ -6,12 +6,12 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import configs.randomBall.game.Hindernis;
 import configs.randomBall.game.RandomBall;
 import configs.randomBall.game.Spielfeld;
 import lib.ctrl.gui.OV_GUI_Controller;
 import lib.ctrl.gui.elements.Button;
 import lib.model.OV_Model;
+import lib.model.phx.Hindernis;
 
 public class RB_GUI_Ctrl_Main extends OV_GUI_Controller {
 
