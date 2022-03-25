@@ -23,16 +23,16 @@ public class RandomBall extends OV_Model {
 
 	// GameSettings
 	private boolean useSpielerSpeedForSchuss = false;
-	private double startSpielerSpeed = 150;
+	private double startSpielerSpeed = 50;
 	private boolean teamCollisions = false;
 	private double spielerRadius = 15;
 	private double ballRadius = 5;
 
 	public RandomBall() {
 
-		loadSpielfeld(400, 300);
+		loadSpielfeld(800, 600);
 		loadBall();
-		loadSpieler(1, 10, startSpielerSpeed);
+		loadSpieler(2, 10, startSpielerSpeed);
 
 		loadHindernisse();
 
@@ -40,7 +40,7 @@ public class RandomBall extends OV_Model {
 
 	private void loadHindernisse() {
 		this.hindernisse = new ArrayList<>();
-		hindernisse.add(new Hindernis(new double[] { 120, 200, 250, 100 }, new double[] { 100, 150, 200, 250 }));
+//		hindernisse.add(new Hindernis(new double[] { 120, 200, 250, 100 }, new double[] { 100, 150, 200, 250 }));
 	}
 
 	private void loadSpieler(int teams, int spielerProTeam, double speed) {
