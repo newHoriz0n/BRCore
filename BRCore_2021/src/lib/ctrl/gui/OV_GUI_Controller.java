@@ -48,7 +48,7 @@ public abstract class OV_GUI_Controller implements Comparable<OV_GUI_Controller>
 	}
 
 	/**
-	 * Methode zur definition von Aktionen, die bei Aktualisierung der GUI
+	 * Methode zur Definition von Aktionen, die bei Aktualisierung der GUI
 	 * ausgeführt werden sollen.
 	 */
 	public abstract void updateGUICtrl();

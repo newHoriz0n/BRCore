@@ -75,4 +75,14 @@ public class ButtonRound extends Button {
 		return posY;
 	}
 
+	@Override
+	public int getBoundingBoxWidth() {
+		return 0;
+	}
+
+	@Override
+	public int getBoundingBoxHeight() {
+		return 0;
+	}
+
 }

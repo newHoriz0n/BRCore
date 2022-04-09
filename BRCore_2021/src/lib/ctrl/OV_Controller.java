@@ -223,7 +223,7 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 
 						@Override
 						public void run() {
-							k.handleEvent(EEventTyp.MAUSKLICK_LINKS);
+							k.handleEvent(OV_EEventTyp.MAUSKLICK_LINKS);
 							ov.setFocusedObject(k);
 						}
 					});
@@ -231,7 +231,7 @@ public class OV_Controller implements KeyListener, MouseListener, MouseMotionLis
 
 						@Override
 						public void run() {
-							k.handleEvent(EEventTyp.MAUSKLICK_RECHTS);
+							k.handleEvent(OV_EEventTyp.MAUSKLICK_RECHTS);
 							ov.setFocusedObject(k);
 						}
 					});

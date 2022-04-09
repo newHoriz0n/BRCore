@@ -23,20 +23,19 @@ public class ButtonRect extends Button {
 		g.setColor(fHintergrund);
 		g.fillRect(posX, posY, width, height);
 		if (mouseOver) {
-			g.setColor(fRahmenHover);
-			g.drawRect(posX, posY, width, height);
 			if (mouseHoldLinks) {
 				g.setColor(fRahmenLinks);
-				g.drawRect(posX, posY, width, height);
-			}
-			if (mouseHoldRechts) {
+			} else if (mouseHoldRechts) {
 				g.setColor(fRahmenRechts);
-				g.drawRect(posX, posY, width, height);
+			} else {
+				g.setColor(fRahmenHover);
 			}
 		} else {
 			g.setColor(fRahmen);
-			g.drawRect(posX, posY, width, height);
 		}
+
+		g.drawRect(posX, posY, width, height);
+
 		if (text != null) {
 			g.setColor(fText);
 			g.drawString(text, posX + 5, posY + 17);
@@ -82,6 +81,16 @@ public class ButtonRect extends Button {
 	@Override
 	public int getPosY() {
 		return posY;
+	}
+
+	@Override
+	public int getBoundingBoxWidth() {
+		return width;
+	}
+
+	@Override
+	public int getBoundingBoxHeight() {
+		return height;
 	}
 
 }

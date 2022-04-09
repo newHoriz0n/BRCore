@@ -6,7 +6,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 
-import lib.ctrl.EEventTyp;
+import lib.ctrl.OV_EEventTyp;
 import lib.ctrl.OV_EventHandler;
 import lib.ctrl.gui.Aktion;
 import lib.model.ObjektVerwaltung.ObjectVerwaltungSettingValues;
@@ -35,7 +35,7 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 
 	private int ohneBullsEyeAnzeigDistanz = 2000;
 
-	private HashMap<EEventTyp, Aktion> eventAktionen = new HashMap<>();
+	private HashMap<OV_EEventTyp, Aktion> eventAktionen = new HashMap<>();
 
 	private long lastUpdate;
 
@@ -105,7 +105,7 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 		this.ausrichtung = richtung;
 	}
 
-	public void setEventAktion(EEventTyp e, Aktion a) {
+	public void setEventAktion(OV_EEventTyp e, Aktion a) {
 		eventAktionen.put(e, a);
 	}
 
@@ -262,7 +262,7 @@ public abstract class KreisObjekt implements Comparable<KreisObjekt>, OV_EventHa
 	}
 
 	@Override
-	public void handleEvent(EEventTyp e) {
+	public void handleEvent(OV_EEventTyp e) {
 		if (eventAktionen.containsKey(e)) {
 			eventAktionen.get(e).run();
 		}

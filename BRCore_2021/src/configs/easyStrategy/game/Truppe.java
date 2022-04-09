@@ -7,7 +7,7 @@ import java.util.List;
 import configs.easyStrategy.game.EasyStrategy.ES_State;
 import configs.easyStrategy.game.kampf.Einheit;
 import configs.easyStrategy.gui.ES_GUI_Ctrl_Truppenansicht;
-import lib.ctrl.EEventTyp;
+import lib.ctrl.OV_EEventTyp;
 import lib.ctrl.OV_Controller;
 import lib.ctrl.gui.Aktion;
 import lib.ctrl.gui.OV_GUI_Controller;
@@ -36,7 +36,7 @@ public class Truppe extends KreisObjekt {
 
 		Truppe me = this;
 
-		setEventAktion(EEventTyp.MAUSKLICK_LINKS, new Aktion() {
+		setEventAktion(OV_EEventTyp.MAUSKLICK_LINKS, new Aktion() {
 
 			@Override
 			public void run() {

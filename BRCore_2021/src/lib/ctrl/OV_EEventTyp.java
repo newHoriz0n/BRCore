@@ -1,0 +1,7 @@
+package lib.ctrl;
+
+public enum OV_EEventTyp {
+
+	MAUSKLICK_LINKS, MAUSKLICK_RECHTS, MAUSDRAG_LINKS, MAUSDRAG_RECHTS;
+	
+}

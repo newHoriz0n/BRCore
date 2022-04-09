@@ -5,7 +5,7 @@ import java.awt.Graphics2D;
 
 import lib.ctrl.gui.Aktion;
 
-public abstract class Button {
+public abstract class Button extends Element {
 
 	private static long hoverTimeOut = 10; // [ms] Zeit zwischen letzter Bewegung und MouseOverCheck
 	private long lastMove;
@@ -17,8 +17,8 @@ public abstract class Button {
 	protected Aktion aktionLinks;
 	protected Aktion aktionRechts;
 
-	protected Color fHintergrund = new Color(0, 0, 0, 0);
-	protected Color fRahmen = new Color(0, 0, 0, 0);
+	protected Color fHintergrund = new Color(0, 0, 0, 10);
+	protected Color fRahmen = new Color(0, 0, 0, 255);
 	protected Color fRahmenHover = Color.ORANGE;
 	protected Color fRahmenLinks = Color.RED;
 	protected Color fRahmenRechts = Color.BLUE;
@@ -52,12 +52,12 @@ public abstract class Button {
 		}
 	}
 
-	public boolean handleMousePress(int x, int y, int button) {
+	public boolean handleMousePress(int x, int y, int mouseButton) {
 		if (checkMouseOver(x, y)) {
-			if (button == 1) {
+			if (mouseButton == 1) {
 				mouseHoldLinks = true;
 			}
-			if (button == 3) {
+			if (mouseButton == 3) {
 				mouseHoldRechts = true;
 			}
 			return true;
@@ -117,5 +117,9 @@ public abstract class Button {
 	public abstract int getPosX();
 	
 	public abstract int getPosY();
+
+	public abstract int getBoundingBoxWidth();
+
+	public abstract int getBoundingBoxHeight();
 
 }

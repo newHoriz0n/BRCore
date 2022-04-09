@@ -8,7 +8,7 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-import lib.ctrl.EEventTyp;
+import lib.ctrl.OV_EEventTyp;
 import lib.ctrl.gui.Aktion;
 import lib.model.KreisObjekt;
 import lib.model.OV_Model;
@@ -36,14 +36,14 @@ public class RandomObjectsModel extends OV_Model {
 
 			k.setBild(img);
 			k.setAusrichtung(r.nextDouble() * 2 * Math.PI);
-			k.setEventAktion(EEventTyp.MAUSKLICK_LINKS, new Aktion() {
+			k.setEventAktion(OV_EEventTyp.MAUSKLICK_LINKS, new Aktion() {
 
 				@Override
 				public void run() {
 					k.setAusrichtung(k.getAusrichtung() + 0.1);
 				}
 			});
-			k.setEventAktion(EEventTyp.MAUSKLICK_RECHTS, new Aktion() {
+			k.setEventAktion(OV_EEventTyp.MAUSKLICK_RECHTS, new Aktion() {
 
 				@Override
 				public void run() {

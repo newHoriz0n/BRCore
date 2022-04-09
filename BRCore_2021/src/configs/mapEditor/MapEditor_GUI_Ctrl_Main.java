@@ -1,4 +1,4 @@
-package configs.billard;
+package configs.mapEditor;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -12,11 +12,11 @@ import lib.ctrl.gui.elements.Button;
 import lib.model.OV_Model;
 import lib.model.phx.Hindernis;
 
-public class B_GUI_Ctrl_Main extends OV_GUI_Controller {
+public class MapEditor_GUI_Ctrl_Main extends OV_GUI_Controller {
 
 	private Color fRasen = new Color(0, 150, 50);
 
-	public B_GUI_Ctrl_Main(OV_Model m) {
+	public MapEditor_GUI_Ctrl_Main(OV_Model m) {
 		super(0, "Main", 0, 0, (int) ((Billard) m).getFeld().getLaenge(), (int) ((Billard) m).getFeld().getBreite(), m);
 	}
 

@@ -4,7 +4,7 @@ import java.awt.Color;
 
 import configs.easyStrategy.game.EasyStrategy.ES_State;
 import configs.easyStrategy.gui.ES_GUI_Ctrl_Ressourcenansicht;
-import lib.ctrl.EEventTyp;
+import lib.ctrl.OV_EEventTyp;
 import lib.ctrl.OV_Controller;
 import lib.ctrl.gui.Aktion;
 import lib.ctrl.gui.OV_GUI_Controller;
@@ -28,7 +28,7 @@ public class Ressource extends KreisObjekt {
 		Ressource me = this;
 
 		// Öffne Ressourcenansicht
-		setEventAktion(EEventTyp.MAUSKLICK_LINKS, new Aktion() {
+		setEventAktion(OV_EEventTyp.MAUSKLICK_LINKS, new Aktion() {
 
 			@Override
 			public void run() {
@@ -41,7 +41,7 @@ public class Ressource extends KreisObjekt {
 		});
 
 		// Setze Abbau
-		setEventAktion(EEventTyp.MAUSKLICK_RECHTS, new Aktion() {
+		setEventAktion(OV_EEventTyp.MAUSKLICK_RECHTS, new Aktion() {
 
 			@Override
 			public void run() {
