@@ -1,4 +1,4 @@
-package configs.mapEditor;
+package lib.map.mapEditorRaster;
 
 import java.awt.Color;
 import java.awt.Graphics2D;

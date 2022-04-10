@@ -13,6 +13,7 @@ import java.util.List;
 
 /**
  * Klasse zum Vereinfachten Lesen und Schreiben von Dateien
+ * 
  * @author paulb
  *
  */
@@ -63,6 +64,17 @@ public class PBFileReadWriter {
 		return files;
 	}
 
+	public static void writeStringToFile(String s, String fileURL) throws IOException {
+		File f = new File(fileURL);
+		f.createNewFile();
+		FileWriter fw = new FileWriter(f, false);
+		BufferedWriter bw = new BufferedWriter(fw);
+
+		bw.write(s);
+
+		bw.close();
+	}
+
 	public static void writeLinesToFile(List<String> lines, String fileURL) throws IOException {
 
 		File f = new File(fileURL);
@@ -92,23 +104,21 @@ public class PBFileReadWriter {
 		return attList;
 
 	}
-	
+
 	/**
-	 * Erwartet 1,2,3
-	 * 			1,2,3
-	 * 			1,2,3 ...
+	 * Erwartet 1,2,3 1,2,3 1,2,3 ...
 	 * 
 	 * @param seperator
 	 * @param URL
 	 * @return
 	 */
 	public static List<String[]> getContentFromFile(String seperator, String url) {
-		
+
 		List<String[]> lineContent = new ArrayList<String[]>();
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(url));
 			String line;
-			while ((line = reader.readLine()) != null) {			
+			while ((line = reader.readLine()) != null) {
 				String[] out = (line.trim()).split(seperator);
 				lineContent.add(out);
 			}
@@ -120,7 +130,7 @@ public class PBFileReadWriter {
 			return null;
 		}
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static String createAbsPfad(Class parent, String relPfad) {
 
@@ -136,10 +146,10 @@ public class PBFileReadWriter {
 
 		return userPfadString + relPfad;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	public static String createRelPfad(Class parent, String absPfad) {
-		
+
 		String userPfadString = "";
 
 		try {
@@ -151,9 +161,9 @@ public class PBFileReadWriter {
 		}
 
 		return absPfad.substring(userPfadString.length());
-		
+
 	}
-	
+
 	public static String generateSaveString(Sendbares o) {
 		return o.toSendString();
 	}

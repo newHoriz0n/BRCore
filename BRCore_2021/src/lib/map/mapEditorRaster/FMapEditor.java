@@ -1,22 +1,21 @@
-package configs.mapEditor;
+package lib.map.mapEditorRaster;
 
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
 
 import javax.swing.JFrame;
 
-public class FMapEditor extends JFrame {
+import lib.io.PBFileReadWriter;
 
-	private MapEditorModel m;
+public class FMapEditor extends JFrame {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public FMapEditor(int breite, int hoehe) {
-		
-		this.m = new MapEditorModel(breite, hoehe);
+	public FMapEditor(MapEditorModel m) {
 		
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -42,8 +41,13 @@ public class FMapEditor extends JFrame {
 
 			@Override
 			public void windowClosing(WindowEvent e) {
-//				System.out.println("Serialisiere...");
-				m.erzeugeSaveFile();
+				System.out.println("Serialisiere...");
+				try {
+					PBFileReadWriter.writeStringToFile(m.toSendString(), "save.test");
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 
 			@Override
