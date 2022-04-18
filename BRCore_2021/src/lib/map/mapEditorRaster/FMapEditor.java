@@ -43,7 +43,7 @@ public class FMapEditor extends JFrame {
 			public void windowClosing(WindowEvent e) {
 				System.out.println("Serialisiere...");
 				try {
-					PBFileReadWriter.writeStringToFile(m.toSendString(), "save.test");
+					PBFileReadWriter.writeStringToFile(m.toSendString(), "save.med");
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

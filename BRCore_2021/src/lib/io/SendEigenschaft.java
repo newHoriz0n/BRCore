@@ -23,4 +23,11 @@ public class SendEigenschaft {
 	public Object getValue() {
 		return value;
 	}
+	
+	@Override
+	public String toString() {
+		String out = "<";
+		out += bezeichner + ":" + typ + ":" + value + ">";
+		return out;
+	}
 }

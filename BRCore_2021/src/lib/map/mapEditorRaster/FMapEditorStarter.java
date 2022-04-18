@@ -5,11 +5,17 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import lib.io.PBFileReadWriter;
+import lib.io.Sendbares;
 
 public class FMapEditorStarter extends JFrame {
 
@@ -44,11 +50,36 @@ public class FMapEditorStarter extends JFrame {
 				dispose();
 			}
 		});
-
 		add(neueMap, gbc);
 
 		JButton ladeMap = new JButton("# Map laden...");
 		gbc.gridx = 1;
+		ladeMap.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser chooser = new JFileChooser();
+				chooser.setCurrentDirectory(new File(PBFileReadWriter.createAbsPfad(this.getClass(), "")));
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("MapEditorDaten", "med");
+				chooser.setFileFilter(filter);
+				int returnVal = chooser.showOpenDialog(new JFrame("Lade Map"));
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					System.out.println("You chose to open this file: " + chooser.getSelectedFile().getName());
+				}
+
+				File file = chooser.getSelectedFile();
+				if (file != null && file.exists()) {
+					List<String> infos = PBFileReadWriter.getLines(chooser.getSelectedFile().getPath());
+					MapEditorModel mem = MapEditorModel.createFromSendbarem(Sendbares.extractObject(infos.get(0)));
+					FMapEditor m = new FMapEditor(mem);
+					m.requestFocus();
+					dispose();
+				}	
+				
+				
+				
+			}
+		});
 		add(ladeMap, gbc);
 
 		pack();
