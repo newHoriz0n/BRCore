@@ -18,7 +18,7 @@ public class RawSendbares implements Sendbares {
 	}
 
 	@Override
-	public String getName() {
+	public String getBezeichner() {
 		return name;
 	}
 

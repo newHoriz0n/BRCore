@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JSpinner;
+import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 public class FMapEditorNeueMapSettings extends JFrame {
@@ -22,6 +23,7 @@ public class FMapEditorNeueMapSettings extends JFrame {
 
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setTitle("Map Settings");
 
 		GridBagLayout gbl = new GridBagLayout();
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -31,37 +33,42 @@ public class FMapEditorNeueMapSettings extends JFrame {
 		gbc.gridwidth = 1;
 		gbc.gridheight = 1;
 
-		// TITEL
-		JLabel titel = new JLabel("Map Settings");
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		add(titel, gbc);
-
 		// SETTINGS
+		// Name
+		JLabel lName = new JLabel("Name");
+		gbc.gridy = 0;
+		gbc.gridy = 0;
+		add(lName, gbc);
+		JTextField tName = new JTextField("New Map");
+		gbc.gridwidth = 2;
+		gbc.gridy = 1;
+		add(tName, gbc);
 		// Breite
 		JLabel lBreite = new JLabel("Breite");
-		gbc.gridy = 1;
+		gbc.gridy = 2;
+		gbc.gridwidth = 1;
 		add(lBreite, gbc);
-		JSpinner sBreite = new JSpinner(new SpinnerNumberModel(30, 20, 100, 1));
+		JSpinner sBreite = new JSpinner(new SpinnerNumberModel(10, 10, 100, 1));
 		gbc.gridx = 1;
 		add(sBreite, gbc);
 		// Hoehe
 		JLabel lHoehe = new JLabel("Höhe");
 		gbc.gridx = 0;
-		gbc.gridy = 2;
+		gbc.gridy = 3;
 		add(lHoehe, gbc);
-		JSpinner sHoehe = new JSpinner(new SpinnerNumberModel(30, 20, 100, 1));
+		JSpinner sHoehe = new JSpinner(new SpinnerNumberModel(10, 10, 100, 1));
 		gbc.gridx = 1;
 		add(sHoehe, gbc);
 
 		// MAP ERSTELLEN
 		JButton neueMap = new JButton("Map erstellen");
 		gbc.gridx = 0;
-		gbc.gridy = 3;
+		gbc.gridy = 4;
 		neueMap.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				mem.setMapName(tName.getText());
 				mem.initWelt((int) sBreite.getValue(), (int) sHoehe.getValue());
 				FMapEditor m = new FMapEditor(mem);
 				m.requestFocus();

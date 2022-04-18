@@ -1,4 +1,4 @@
-package lib.map.mapEditorRaster;
+package lib.map;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -66,7 +66,7 @@ public class FeldTyp implements Sendbares {
 	}
 
 	@Override
-	public String getName() {
+	public String getBezeichner() {
 		return "FeldTyp";
 	}
 

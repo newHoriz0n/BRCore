@@ -13,64 +13,66 @@ public interface Sendbares {
 
 	public abstract List<SendEigenschaft> getProperties();
 
-	public abstract String getName();
+	public abstract String getBezeichner();
 
 	@SuppressWarnings("unchecked")
 	public default String toSendString() {
 
 		String out = "<";
 		out += EObjektTyp.OBJECT.toString() + ":";
-		out += getName() + ":";
+		out += getBezeichner() + ":";
 
 		List<SendEigenschaft> eigenschaften = getProperties();
 
 		for (int i = 0; i < eigenschaften.size(); i++) {
 
-			out += "<";
-			out += eigenschaften.get(i).getTyp().toString() + ":";
-			out += eigenschaften.get(i).getBezeichner() + ":";
+			if (eigenschaften.get(i).getTyp().equals(EObjektTyp.OBJECT)) {
+				out += getString(eigenschaften.get(i).getValue());
+			} else {
 
-			if (eigenschaften.get(i).getTyp().equals(EObjektTyp.INTEGER)) {
-				out += ((Integer) (eigenschaften.get(i).getValue())).toString();
-			} else if (eigenschaften.get(i).getTyp().equals(EObjektTyp.DOUBLE)) {
-				out += ((Double) (eigenschaften.get(i).getValue())).toString();
-			} else if (eigenschaften.get(i).getTyp().equals(EObjektTyp.LONG)) {
-				out += ((Long) (eigenschaften.get(i).getValue())).toString();
-			} else if (eigenschaften.get(i).getTyp().equals(EObjektTyp.STRING)) {
-				out += ((String) (eigenschaften.get(i).getValue())).toString();
-			} else
+				out += "<";
+				out += eigenschaften.get(i).getTyp().toString() + ":";
+				out += eigenschaften.get(i).getBezeichner() + ":";
 
-			if (eigenschaften.get(i).getTyp().equals(EObjektTyp.MATRIX)) {
-				Object[][] value = (Object[][]) eigenschaften.get(i).getValue();
-				if (value.length > 0) {
-					out += "<";
-					for (int k = 0; k < value[0].length; k++) {
+				if (eigenschaften.get(i).getTyp().equals(EObjektTyp.INTEGER)) {
+					out += ((Integer) (eigenschaften.get(i).getValue())).toString();
+				} else if (eigenschaften.get(i).getTyp().equals(EObjektTyp.DOUBLE)) {
+					out += ((Double) (eigenschaften.get(i).getValue())).toString();
+				} else if (eigenschaften.get(i).getTyp().equals(EObjektTyp.LONG)) {
+					out += ((Long) (eigenschaften.get(i).getValue())).toString();
+				} else if (eigenschaften.get(i).getTyp().equals(EObjektTyp.STRING)) {
+					out += ((String) (eigenschaften.get(i).getValue())).toString();
+				} else
+
+				if (eigenschaften.get(i).getTyp().equals(EObjektTyp.MATRIX)) {
+					Object[][] value = (Object[][]) eigenschaften.get(i).getValue();
+					if (value.length > 0) {
 						out += "<";
-						if (value[0].length > 0) {
-							for (int j = 0; j < value.length; j++) {
-								out += getString(value[j][k]);
+						for (int k = 0; k < value[0].length; k++) {
+							out += "<";
+							if (value[0].length > 0) {
+								for (int j = 0; j < value.length; j++) {
+									out += getString(value[j][k]);
+								}
 							}
+							out += ">";
 						}
 						out += ">";
 					}
-					out += ">";
-				}
-			} else
+				} else
 
-			if (eigenschaften.get(i).getTyp().equals(EObjektTyp.LIST)) {
-				List<Object> value = (List<Object>) eigenschaften.get(i).getValue();
-				// out += "<";
-				for (int j = 0; j < value.size(); j++) {
-					out += getString(value.get(j));
+				if (eigenschaften.get(i).getTyp().equals(EObjektTyp.LIST)) {
+					List<Object> value = (List<Object>) eigenschaften.get(i).getValue();
+					// out += "<";
+					for (int j = 0; j < value.size(); j++) {
+						out += getString(value.get(j));
+					}
+					// out += ">";
 				}
-				// out += ">";
-			} else
 
-			if (eigenschaften.get(i).getTyp().equals(EObjektTyp.OBJECT)) {
-				out += "WIE KOMME ICH HIER HIN ???";
+				out += ">";
+			
 			}
-
-			out += ">";
 
 		}
 

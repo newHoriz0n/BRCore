@@ -16,6 +16,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import lib.io.PBFileReadWriter;
 import lib.io.Sendbares;
+import lib.map.FeldTyp;
+import lib.map.Map;
 
 public class FMapEditorStarter extends JFrame {
 
@@ -70,7 +72,11 @@ public class FMapEditorStarter extends JFrame {
 				File file = chooser.getSelectedFile();
 				if (file != null && file.exists()) {
 					List<String> infos = PBFileReadWriter.getLines(chooser.getSelectedFile().getPath());
-					MapEditorModel mem = MapEditorModel.createFromSendbarem(Sendbares.extractObject(infos.get(0)));
+					
+					Map map = Map.createFromSendbarem(Sendbares.extractObject(infos.get(0)));
+					
+					MapEditorModel mem = new MapEditorModel();
+					mem.setMap(map);
 					FMapEditor m = new FMapEditor(mem);
 					m.requestFocus();
 					dispose();
@@ -89,14 +95,20 @@ public class FMapEditorStarter extends JFrame {
 
 	public static void main(String[] args) {
 
+		// Beispiel zur Initialisierung des Map Editors
+		
 		FeldTyp ffrei = new FeldTyp("Frei", "[ ]", Color.WHITE);
 		FeldTyp fwand = new FeldTyp("Wand", "[#]", Color.DARK_GRAY);
 		List<FeldTyp> feldTypen = new ArrayList<>();
 		feldTypen.add(ffrei);
 		feldTypen.add(fwand);
 
-		MapEditorModel mem = new MapEditorModel(feldTypen);
-
+		Map m = new Map();
+		m.setFeldTypen(feldTypen);
+		
+		MapEditorModel mem = new MapEditorModel();
+		mem.setMap(m);
+		
 		FMapEditorStarter mes = new FMapEditorStarter(mem);
 		mes.requestFocus();
 	}

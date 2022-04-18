@@ -20,6 +20,7 @@ public class FMapEditor extends JFrame {
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		setExtendedState(MAXIMIZED_BOTH);
+		setTitle(m.getMapName());
 		
 		// MainPanel
 		PMapEditorPanel panel = new PMapEditorPanel(m); 
@@ -43,7 +44,7 @@ public class FMapEditor extends JFrame {
 			public void windowClosing(WindowEvent e) {
 				System.out.println("Serialisiere...");
 				try {
-					PBFileReadWriter.writeStringToFile(m.toSendString(), "save.med");
+					PBFileReadWriter.writeStringToFile(m.getMap().toSendString(), m.getMapName() + ".med");
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
