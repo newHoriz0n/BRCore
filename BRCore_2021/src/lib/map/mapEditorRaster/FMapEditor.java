@@ -49,6 +49,7 @@ public class FMapEditor extends JFrame {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				System.out.println("Serialisierung abgeschlossen.");
 			}
 
 			@Override

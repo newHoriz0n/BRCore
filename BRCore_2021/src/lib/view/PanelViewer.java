@@ -17,7 +17,9 @@ import lib.ctrl.OV_EventHandler;
  * 
  * @author paulb
  *
- *         Bietet Funktionalitäten zum Verschieben der Ansicht in einem JPanel
+ *         
+ *         Bietet Funktionalitäten zum Verschieben der Ansicht in einem JPanel mit der Maus
+ *         Nutze offX und offY um die Graphics zu verschieben
  */
 
 public class PanelViewer implements ComponentListener, MouseMotionListener, MouseListener {
@@ -53,6 +55,8 @@ public class PanelViewer implements ComponentListener, MouseMotionListener, Mous
 	/**
 	 * Setzt posX und posY so, dass die übergebene Koordinate in der Mitte des
 	 * Bildes dargestellt wird.
+	 * 
+	 * Nutze PanelViewer als ComponentListener im Panel um automatisch bei Resize auf Koordinate zu zentrieren.
 	 * 
 	 * @param centerX
 	 * @param centerY

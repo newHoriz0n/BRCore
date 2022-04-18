@@ -63,7 +63,6 @@ public class PMapEditorPanel extends JPanel implements OV_EventHandler {
 		addMouseListener(pv);
 		addMouseMotionListener(pv);
 		pv.addEventListener(this);
-
 		pv.aufKoordinateZentrieren(m.getBreite() * feldgroesse / 2, m.getHoehe() * feldgroesse / 2);
 
 	}

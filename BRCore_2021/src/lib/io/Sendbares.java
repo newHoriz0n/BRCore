@@ -244,7 +244,7 @@ public interface Sendbares {
 				tiefe++;
 			} else if (inhalt.charAt(i) == '>') {
 				tiefe--;
-				System.out.println(tiefe);
+//				System.out.println(tiefe);
 				if (tiefe == 0) {
 					os.add(new String(current));
 					current = "";

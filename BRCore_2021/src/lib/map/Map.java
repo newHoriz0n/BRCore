@@ -107,6 +107,14 @@ public class Map implements Sendbares {
 		return m;		
 		
 	}
+
+	public int getBreite() {
+		return felder.length;
+	}
+
+	public int getHoehe() {
+		return felder[0].length;
+	}
 	
 	
 
