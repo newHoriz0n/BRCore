@@ -178,5 +178,9 @@ public class TradeRunner implements KeyListener {
 		// TODO Auto-generated method stub
 
 	}
+
+	public double getSichtRadius() {
+		return 1.5;
+	}
 	
 }

@@ -14,12 +14,14 @@ public class FeldTyp implements Sendbares {
 	private String kuerzel;
 	private String bildURL;
 	private Color farbe;
+	private String[] eigenschaften;
 
 	public FeldTyp(String bezeichnung, String kuerzel, Color farbe) {
 		this.bezeichnung = bezeichnung;
 		this.kuerzel = kuerzel;
 		this.bildURL = "";
 		this.farbe = farbe;
+		this.eigenschaften = new String [0];
 	}
 
 	public FeldTyp(Sendbares rs) {
@@ -27,6 +29,20 @@ public class FeldTyp implements Sendbares {
 		this.kuerzel = (String) rs.getProperties().get(1).getValue();
 		this.bildURL = (String) rs.getProperties().get(2).getValue();
 		this.farbe = new Color(Integer.parseInt((String) rs.getProperties().get(3).getValue()));
+		
+		List<String> eigs = new ArrayList<>();
+		for (Object o : (Object[])rs.getProperties().get(4).getValue()) {
+			eigs.add((String)o);
+		}
+		
+		this.eigenschaften = new String [eigs.size()] ;
+		for (int i = 0; i < eigenschaften.length; i++) {
+			eigenschaften[i] = eigs.get(i);
+		}
+	}
+
+	public void setEigenschaften(String[] eigs) {
+		this.eigenschaften = eigs;
 	}
 
 	public String getBezeichnung() {
@@ -44,6 +60,10 @@ public class FeldTyp implements Sendbares {
 	public String getKuerzel() {
 		return kuerzel;
 	}
+	
+	public String[] getEigenschaften() {
+		return eigenschaften;
+	}
 
 	@Override
 	public List<SendEigenschaft> getProperties() {
@@ -60,6 +80,9 @@ public class FeldTyp implements Sendbares {
 
 		SendEigenschaft seFarbe = new SendEigenschaft("Farbe", EObjektTyp.STRING, "" + farbe.getRGB());
 		ses.add(seFarbe);
+
+		SendEigenschaft seEigenschaften = new SendEigenschaft("Eigenschaften", EObjektTyp.ARRAY, eigenschaften);
+		ses.add(seEigenschaften);
 
 		return ses;
 

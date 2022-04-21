@@ -3,7 +3,9 @@ package configs.traderunner;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Ellipse2D;
 
 import javax.swing.JPanel;
 
@@ -26,7 +28,7 @@ public class PTradeRunnerPanel extends JPanel implements OV_EventHandler {
 
 	public PTradeRunnerPanel(TradeRunner tr) {
 		this.tr = tr;
-		
+
 		tr.addUpdateListener(this);
 
 		setDoubleBuffered(true);
@@ -42,11 +44,17 @@ public class PTradeRunnerPanel extends JPanel implements OV_EventHandler {
 
 		Graphics2D g2d = (Graphics2D) g;
 
+		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
 		g2d.setColor(Color.WHITE);
 		g2d.fillRect(0, 0, getWidth(), getHeight());
 
+		// Berechne Feld auf dem Spieler gerade ist.
 		int[] spielerPos = tr.getSpielerPosition();
-		pv.aufKoordinateZentrieren(spielerPos[0] * feldgroesse + feldgroesse / 2, spielerPos[1] * feldgroesse + feldgroesse / 2);
+		int spielerScreenX = spielerPos[0] * feldgroesse + feldgroesse / 2;
+		int spielerScreenY = spielerPos[1] * feldgroesse + feldgroesse / 2;
+
+		pv.aufKoordinateZentrieren(spielerScreenX, spielerScreenY);
 
 		AffineTransform at = new AffineTransform();
 		at.translate(pv.getOffX(), pv.getOffY());
@@ -55,7 +63,10 @@ public class PTradeRunnerPanel extends JPanel implements OV_EventHandler {
 		// DRAW HERE
 		// ////////////////////////////////////////////////////////////////////
 
-		// Berechne Feld auf dem Spieler gerade ist.
+		// Sichtradius
+		int sichtradius = (int) ((tr.getSichtRadius() + 0.5) * feldgroesse);
+		g2d.setClip(new Ellipse2D.Double(spielerScreenX - (sichtradius), spielerScreenY - (sichtradius), 2 * sichtradius, 2 * sichtradius));
+
 
 		// Zeichne Felder
 		for (int i = 0; i < tr.getMap().getBreite(); i++) {
@@ -72,15 +83,13 @@ public class PTradeRunnerPanel extends JPanel implements OV_EventHandler {
 		// Zeichne Bots
 		g2d.setColor(Color.RED);
 		for (Trader t : tr.getBots()) {
-			g2d.fillOval(t.getPosition()[0] * feldgroesse + 2, t.getPosition()[1] * feldgroesse + 2, feldgroesse - 3, feldgroesse - 3);			
+			g2d.fillOval(t.getPosition()[0] * feldgroesse + 2, t.getPosition()[1] * feldgroesse + 2, feldgroesse - 3, feldgroesse - 3);
 		}
-			
-		
+
 		// Zeichne Spieler
 		g2d.setColor(Color.GREEN);
 		g2d.fillOval(spielerPos[0] * feldgroesse + 2, spielerPos[1] * feldgroesse + 2, feldgroesse - 3, feldgroesse - 3);
 
-		
 		////////////////////////////////////////////////////////////////////////////////
 
 		// GUI

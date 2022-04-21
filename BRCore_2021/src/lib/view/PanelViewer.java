@@ -34,7 +34,9 @@ public class PanelViewer implements ComponentListener, MouseMotionListener, Mous
 
 	// MouseControls
 	private int aktButton;
+	@SuppressWarnings("unused")
 	private int firstMousePressX;
+	@SuppressWarnings("unused")
 	private int firstMousePressY;
 	private int lastMouseX;
 	private int lastMouseY;

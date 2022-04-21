@@ -54,7 +54,9 @@ public class MapEditorModel implements Sendbares {
 
 	public void writeFeldTyp(int x, int y, int typ) {
 		if (x >= 0 && x < getBreite() && y >= 0 && y < getHoehe()) {
-			map.writeFeldTyp(x, y, typ);
+			if (map.getObjektVonPosition(x, y) == null) {
+				map.writeFeldTyp(x, y, typ);
+			}
 		}
 	}
 
@@ -91,7 +93,7 @@ public class MapEditorModel implements Sendbares {
 		return "MapEditorModel";
 	}
 
-	public Sendbares getMap() {
+	public Map getMap() {
 		return map;
 	}
 
@@ -100,7 +102,7 @@ public class MapEditorModel implements Sendbares {
 	}
 
 	public String getMapName() {
-	return this.map.getMapName();
+		return this.map.getMapName();
 	}
 
 }

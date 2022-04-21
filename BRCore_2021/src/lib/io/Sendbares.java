@@ -1,6 +1,7 @@
 package lib.io;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -63,15 +64,28 @@ public interface Sendbares {
 
 				if (eigenschaften.get(i).getTyp().equals(EObjektTyp.LIST)) {
 					List<Object> value = (List<Object>) eigenschaften.get(i).getValue();
-					// out += "<";
 					for (int j = 0; j < value.size(); j++) {
 						out += getString(value.get(j));
 					}
-					// out += ">";
+				} else
+
+				if (eigenschaften.get(i).getTyp().equals(EObjektTyp.ARRAY)) {
+					Object[] value = (Object[]) eigenschaften.get(i).getValue();
+					for (int j = 0; j < value.length; j++) {
+						out += getString(value[j]);
+					}
+				} else
+
+				if (eigenschaften.get(i).getTyp().equals(EObjektTyp.HASHMAP_STR_STR)) {
+					HashMap<String, String> value = (HashMap<String, String>) eigenschaften.get(i).getValue();
+					for (String s : value.keySet()) {
+						// System.out.println(s);
+						out += "<<" + s + "><" + value.get(s) + ">>";
+					}
 				}
 
 				out += ">";
-			
+
 			}
 
 		}
@@ -120,6 +134,7 @@ public interface Sendbares {
 			if (s.charAt(i) == '>') {
 				tiefe--;
 				if (tiefe == 1) {
+//					System.out.println("i:" + inhalt);
 					ses.add(extractSendEigenschaft(inhalt));
 					inhalt = "";
 				}
@@ -142,6 +157,8 @@ public interface Sendbares {
 	}
 
 	public static SendEigenschaft extractSendEigenschaft(String s) {
+
+//		System.out.println(s);
 
 		int index = 0;
 		String typ = "";
@@ -208,6 +225,40 @@ public interface Sendbares {
 					}
 					// System.out.println(inhalt);
 					o = extractListe(inhalt);
+				} else if (typ.equals(EObjektTyp.ARRAY.toString())) {
+					String inhalt = "";
+					int klammern = 0;
+					while (++index < s.length() - 1) {
+						inhalt += s.charAt(index);
+						if (s.charAt(index) == '<') {
+							klammern++;
+						} else if (s.charAt(index) == '>') {
+							klammern--;
+						}
+						if (klammern == -1) {
+							break;
+						}
+					}
+					// System.out.println(inhalt);
+					o = extractArray(inhalt);
+
+				} else if (typ.equals(EObjektTyp.HASHMAP_STR_STR.toString())) {
+					String inhalt = "";
+					int klammern = 0;
+					while (++index < s.length() - 1) {
+						inhalt += s.charAt(index);
+						if (s.charAt(index) == '<') {
+							klammern++;
+						} else if (s.charAt(index) == '>') {
+							klammern--;
+						}
+						if (klammern == -1) {
+							break;
+						}
+					}
+//					System.out.println("h: " + inhalt);
+					o = extractHashMapStrStr(inhalt);
+
 				} else if (typ.equals(EObjektTyp.STRING.toString())) {
 					String inhalt = "";
 					int klammern = 0;
@@ -234,7 +285,67 @@ public interface Sendbares {
 
 	}
 
+	public static HashMap<String, String> extractHashMapStrStr(String inhalt) {
+
+//		System.out.println(inhalt);
+		
+		HashMap<String, String> hm = new HashMap<>();
+
+		String current = "";
+		String key = "";
+		String value = "";
+		int state = 0;
+		int tiefe = 0;
+
+		for (int i = 0; i < inhalt.length(); i++) {
+			if (inhalt.charAt(i) == '>') {
+				if (state == 0 && tiefe == 2) {
+					state++;
+					key = current;
+//					System.out.println("k: " + key);
+				} else if (state == 1 && tiefe == 2) {
+					value = current;
+//					System.out.println("v: " + value);
+//					System.out.println(key + ":" + value);
+					hm.put(key, value);
+					state = 0;
+				}
+				current = "";
+				tiefe--;
+
+			} else if (inhalt.charAt(i) == '<') {
+				tiefe++;
+			} else {
+				current += inhalt.charAt(i);
+			}
+		}
+
+		return hm;
+
+	}
+
+	public static Object[] extractArray(String inhalt) {
+
+		List<Object> obs = new ArrayList<>();
+		String current = "";
+		for (int i = 0; i < inhalt.length(); i++) {
+			if (inhalt.charAt(i) == '>') {
+				obs.add(new String(current));
+				current = "";
+
+			} else {
+				if (inhalt.charAt(i) != '<') {
+					current += inhalt.charAt(i);
+				}
+			}
+		}
+
+		return obs.toArray();
+
+	}
+
 	public static List<String> extractListe(String inhalt) {
+//		System.out.println("l:" + inhalt);
 		int tiefe = 0;
 		List<String> os = new ArrayList<>();
 		String current = "";
@@ -244,7 +355,6 @@ public interface Sendbares {
 				tiefe++;
 			} else if (inhalt.charAt(i) == '>') {
 				tiefe--;
-//				System.out.println(tiefe);
 				if (tiefe == 0) {
 					os.add(new String(current));
 					current = "";

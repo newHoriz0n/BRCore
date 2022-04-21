@@ -98,6 +98,8 @@ public class FMapEditorStarter extends JFrame {
 		// Beispiel zur Initialisierung des Map Editors
 		
 		FeldTyp ffrei = new FeldTyp("Frei", "[ ]", Color.WHITE);
+		ffrei.setEigenschaften(new String [] {"Hoehe" , "Besitzer", "Bewuchs"});
+		
 		FeldTyp fwand = new FeldTyp("Wand", "[#]", Color.DARK_GRAY);
 		List<FeldTyp> feldTypen = new ArrayList<>();
 		feldTypen.add(ffrei);
