@@ -31,6 +31,10 @@ public class TradeRunner implements KeyListener {
 	// Keys
 	private boolean[] keyPressed = new boolean[256];
 
+	
+	// GameSettings
+	private double sichtweite = 1.5;
+	
 	public TradeRunner() {
 
 		loadMap();
@@ -71,7 +75,6 @@ public class TradeRunner implements KeyListener {
 			List<String> infos = PBFileReadWriter.getLines(chooser.getSelectedFile().getPath());
 
 			this.map = new TRMap(Map.createFromSendbarem(Sendbares.extractObject(infos.get(0))));
-
 		}
 	}
 	
@@ -180,7 +183,7 @@ public class TradeRunner implements KeyListener {
 	}
 
 	public double getSichtRadius() {
-		return 1.5;
+		return sichtweite;
 	}
 	
 }

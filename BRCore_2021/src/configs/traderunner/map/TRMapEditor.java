@@ -24,6 +24,7 @@ public class TRMapEditor {
 		FeldTyp fwand = new FeldTyp("Wand", "[#]", Color.DARK_GRAY);
 		FeldTyp fstart = new FeldTyp("Start", "[S]", Color.GREEN);
 		FeldTyp fshop = new FeldTyp("Shop", "[?]", Color.ORANGE);
+		fshop.setEigenschaften(new String[] {"Name" , "ID"});
 		FeldTyp fbot = new FeldTyp("Bot", "[@]", Color.RED.darker());
 		
 		List<FeldTyp> feldTypen = new ArrayList<>();

@@ -92,13 +92,20 @@ public class PTradeRunnerPanel extends JPanel implements OV_EventHandler {
 
 		////////////////////////////////////////////////////////////////////////////////
 
-		// GUI
 
 		at.setToIdentity();
 		g2d.setTransform(at);
-
-		// c.drawGUI(g2d);
-
+		g2d.setClip(null);
+		
+		// GUI ///////////////////
+		
+		// Spieler Stats
+		g2d.setColor(Color.BLACK);
+		g2d.drawString("Test", 100, 100);
+		
+		
+		
+		
 	}
 
 	@Override

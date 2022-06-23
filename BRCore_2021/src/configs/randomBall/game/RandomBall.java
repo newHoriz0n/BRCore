@@ -23,7 +23,7 @@ public class RandomBall extends OV_Model {
 
 	// GameSettings
 	private boolean useSpielerSpeedForSchuss = false;
-	private double startSpielerSpeed = 50;
+	private double startSpielerSpeed = 100;
 	private boolean teamCollisions = false;
 	private double spielerRadius = 15;
 	private double ballRadius = 5;

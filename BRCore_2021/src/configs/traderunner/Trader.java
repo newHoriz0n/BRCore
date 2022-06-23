@@ -2,6 +2,7 @@ package configs.traderunner;
 
 public class Trader {
 
+	protected String name;
 	protected int[] position;
 
 	public Trader(int x, int y) {
@@ -17,5 +18,13 @@ public class Trader {
 	
 	public int[] getPosition() {
 		return position;
+	}
+	
+	public void setName(String s) {
+		this.name = s;
+	}
+	
+	public String getName() {
+		return name;
 	}
 }

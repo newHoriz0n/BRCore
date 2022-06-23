@@ -5,6 +5,7 @@ import java.util.List;
 
 import lib.map.FeldTyp;
 import lib.map.Map;
+import lib.map.MapObjekt;
 
 public class TRMap {
 
@@ -48,6 +49,13 @@ public class TRMap {
 		}
 
 		// System.out.println(out);
+		
+		// SHOPS		
+		for (MapObjekt	 o : m.getMapObjekte()) {
+			if(o.getTyp().equals("Shop")) {
+				System.out.println(o.getEigenschaften().get("Name"));
+			}
+		}
 
 	}
 	
